@@ -160,6 +160,11 @@ class Net {
   vector<float> params_weight_decay_;
   // The bytes of memory used by this net
   size_t memory_used_;
+
+  // Expands imports, to allow sharing of layers definitions between nets
+  static void expand(const NetParameter& source, NetParameter& target, const string& pwd);
+  static string resolve(const string& path, const string& pwd);
+
   DISABLE_COPY_AND_ASSIGN(Net);
 };
 

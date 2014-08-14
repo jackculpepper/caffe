@@ -1,8 +1,8 @@
 name: "CFW_deploy"
 input: "data"
-input_dim: 10
+input_dim: 64
 input_dim: 3
-input_dim: 250
+input_dim: 250 
 input_dim: 200
 layers {
   name: "conv1"
@@ -41,20 +41,9 @@ layers {
   }
 }
 layers {
-  name: "norm1"
-  type: LRN
-  bottom: "pool1"
-  top: "norm1"
-  lrn_param {
-    local_size: 5
-    alpha: 0.0001
-    beta: 0.75
-  }
-}
-layers {
   name: "conv2"
   type: CONVOLUTION
-  bottom: "norm1"
+  bottom: "pool1"
   top: "conv2"
   blobs_lr: 1
   blobs_lr: 1
@@ -88,20 +77,9 @@ layers {
   }
 }
 layers {
-  name: "norm2"
-  type: LRN
-  bottom: "pool2"
-  top: "norm2"
-  lrn_param {
-    local_size: 5
-    alpha: 0.0001
-    beta: 0.75
-  }
-}
-layers {
   name: "conv3"
   type: CONVOLUTION
-  bottom: "norm2"
+  bottom: "pool2"
   top: "conv3"
   blobs_lr: 1
   blobs_lr: 1
@@ -135,20 +113,9 @@ layers {
   }
 }
 layers {
-  name: "norm3"
-  type: LRN
-  bottom: "pool3"
-  top: "norm3"
-  lrn_param {
-    local_size: 5
-    alpha: 0.0001
-    beta: 0.75
-  }
-}
-layers {
   name: "ip1"
   type: INNER_PRODUCT
-  bottom: "norm3"
+  bottom: "pool3"
   top: "ip1"
   blobs_lr: 1
   blobs_lr: 2

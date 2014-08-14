@@ -8,7 +8,6 @@ import os
 import random
 from itertools import islice
 import time
-import Image
 import socket
 import httplib
 
@@ -16,8 +15,8 @@ from IPython.parallel import Client
 rc = Client()
 dview = rc[:]
 
-CFW_DIR = '/Users/zayd/Documents/face/data/cfw/'
-CFW_DST_DIR = '/Users/zayd/Documents/face/data/cfw_full2/'
+CFW_DIR = './thumbnails_features_deduped_publish/'
+CFW_DST_DIR = './cfw_full/'
 
 TIMEOUT = 0.25
 socket.setdefaulttimeout(TIMEOUT)
@@ -28,12 +27,11 @@ def celeb_download(celeb):
 	import random
 	from itertools import islice
 	import time
-	import Image
 	import socket
 	import httplib
 
-	CFW_DIR = '/Users/zayd/Documents/face/data/cfw/'
-	CFW_DST_DIR = '/Users/zayd/Documents/face/data/cfw_full2/'
+	CFW_DIR = './thumbnails_features_deduped_publish/'
+	CFW_DST_DIR = './cfw_full/'
 	
 	TIMEOUT = 0.25
 	socket.setdefaulttimeout(TIMEOUT)

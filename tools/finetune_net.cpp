@@ -14,8 +14,8 @@ using namespace caffe;  // NOLINT(build/namespaces)
 
 int main(int argc, char** argv) {
   ::google::InitGoogleLogging(argv[0]);
-  if (argc != 3) {
-    LOG(ERROR) << "Usage: finetune_net solver_proto_file pretrained_net";
+  if (argc < 2 || argc > 4) {
+    LOG(ERROR) << "Usage: finetune_net solver_proto_file pretrained_net gpu_id";
     return 1;
   }
 
@@ -24,9 +24,18 @@ int main(int argc, char** argv) {
 
   LOG(INFO) << "Starting Optimization";
   SGDSolver<float> solver(solver_param);
-  LOG(INFO) << "Loading from " << argv[2];
-  solver.net()->CopyTrainedLayersFrom(string(argv[2]));
-  solver.Solve();
+  if (argc == 3)  {
+    LOG(INFO) << "Loading from " << argv[2];
+    solver.net()->CopyTrainedLayersFrom(string(argv[2]));
+    solver.Solve();
+  }
+  else if (argc == 4) {
+    LOG(INFO) << "Using GPU " << argv[3];
+    Caffe::SetDevice(atoi(argv[3]));
+    LOG(INFO) << "Loading from " << argv[2];
+    solver.net()->CopyTrainedLayersFrom(string(argv[2]));
+    solver.Solve();
+  }
   LOG(INFO) << "Optimization Done.";
 
   return 0;

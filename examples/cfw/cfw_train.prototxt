@@ -20,8 +20,8 @@ layers {
   blobs_lr: 1
   blobs_lr: 1
   convolution_param {
-    num_output: 25
-    kernel_size: 7
+    num_output: 20
+    kernel_size: 11
     stride: 1
     weight_filler {
       type: "xavier"
@@ -49,25 +49,14 @@ layers {
   }
 }
 layers {
-  name: "norm1"
-  type: LRN
-  bottom: "pool1"
-  top: "norm1"
-  lrn_param {
-    local_size: 5
-    alpha: 0.0001
-    beta: 0.75
-  }
-}
-layers {
   name: "conv2"
   type: CONVOLUTION
-  bottom: "norm1"
+  bottom: "pool1"
   top: "conv2"
   blobs_lr: 1
   blobs_lr: 1
   convolution_param {
-    num_output: 49
+    num_output: 40
     kernel_size: 5
     stride: 1
     weight_filler {
@@ -96,25 +85,14 @@ layers {
   }
 }
 layers {
-  name: "norm2"
-  type: LRN
-  bottom: "pool2"
-  top: "norm2"
-  lrn_param {
-    local_size: 5
-    alpha: 0.0001
-    beta: 0.75
-  }
-}
-layers {
   name: "conv3"
   type: CONVOLUTION
-  bottom: "norm2"
+  bottom: "pool2"
   top: "conv3"
   blobs_lr: 1
   blobs_lr: 1
   convolution_param {
-    num_output: 64
+    num_output: 60
     kernel_size: 5
     stride: 1
     weight_filler {
@@ -143,20 +121,9 @@ layers {
   }
 }
 layers {
-  name: "norm3"
-  type: LRN
-  bottom: "pool3"
-  top: "norm3"
-  lrn_param {
-    local_size: 5
-    alpha: 0.0001
-    beta: 0.75
-  }
-}
-layers {
   name: "ip1"
   type: INNER_PRODUCT
-  bottom: "norm3"
+  bottom: "pool3"
   top: "ip1"
   blobs_lr: 1
   blobs_lr: 2
@@ -205,11 +172,11 @@ layers {
   name: "relu5"
   type: RELU
   bottom: "ip2" 
-  top: "relu4"
+  top: "relu5"
 }
 layers {
   name: "loss"
   type: SOFTMAX_LOSS 
-  bottom: "relu4"
+  bottom: "relu5"
   bottom: "label"
 }

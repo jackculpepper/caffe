@@ -18,6 +18,6 @@ GLOG_logtostderr=1 $TOOLS/convert_imageset.bin \
 
 echo "Computing image mean..."
 
-$TOOLS/compute_image_mean.bin ./cfw_leveldb mean.binaryproto
+$TOOLS/compute_image_mean.bin ./cfw_leveldb mean_50.binaryproto
 
 echo "Done."

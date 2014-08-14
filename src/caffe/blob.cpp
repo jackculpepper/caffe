@@ -174,6 +174,10 @@ template <typename Dtype>
 void Blob<Dtype>::FromProto(const BlobProto& proto) {
   Reshape(proto.num(), proto.channels(), proto.height(), proto.width());
   // copy data
+  LOG(INFO) << "Copying source layer with (num, channels, height, width): " 
+      << proto.num() << ", " << proto.channels() 
+      << ", " << proto.height() << ", " 
+      << proto.width();
   Dtype* data_vec = mutable_cpu_data();
   for (int i = 0; i < count_; ++i) {
     data_vec[i] = proto.data(i);

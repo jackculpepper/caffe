@@ -72,6 +72,7 @@ class Classifier(caffe.Net):
         #    ])
         #    inputs = inputs[:, crop[0]:crop[2], crop[1]:crop[3], :]
 
+
         # Classify
         caffe_in = np.asarray([self.preprocess(self.inputs[0], in_)
                     for in_ in inputs])
@@ -84,3 +85,24 @@ class Classifier(caffe.Net):
             predictions = predictions.mean(1)
 
         return predictions
+
+    def compute_features(self, inputs, blob_name):
+        """
+        Predict classification probabilities of inputs.
+
+        Take
+        inputs: iterable of (H x W x K) input ndarrays.
+        oversample: average predictions across center, corners, and mirrors
+                    when True (default). Center-only prediction when False.
+
+        Give
+        predictions: (N x C) ndarray of class probabilities
+                     for N images and C classes.
+        """
+        caffe_in = np.asarray([self.preprocess(self.inputs[0], in_)
+                    for in_ in inputs])
+        out = self.forward_all(**{self.inputs[0]: caffe_in})
+        features = self.blobs[blob_name].data.squeeze(axis=(2,3))
+
+        return features
+

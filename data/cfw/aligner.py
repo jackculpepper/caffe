@@ -55,8 +55,8 @@ class Aligner(object):
     else:
       print 'STASM initialization failed: data_path = ' + self.data_path
 
-    self.default_pose = self.process_default_pose('/home/zayd/face/data/default_face.jpg',
-            '/home/zayd/face/data/default_pose.pickle')
+    self.default_pose = self.process_default_pose('./default_face.jpg',
+            './default_pose.pickle')
 
   def get_interest_points(self):
 

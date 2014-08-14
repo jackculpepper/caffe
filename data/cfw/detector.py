@@ -8,7 +8,7 @@ from skimage import transform
 
 class Detector(object):
 
-  face_cascade = cv2.CascadeClassifier('/home/zayd/face/data/koestinger_cascade_aflw_lbp.xml')
+  face_cascade = cv2.CascadeClassifier('koestinger_cascade_aflw_lbp.xml')
   #profile_cascade = cv2.CascadeClassifier('haarcascade_profileface.xml')
 
   out_dim = (200, 250)
@@ -21,6 +21,7 @@ class Detector(object):
   def detect_faces(self, img):
     #img_rr = rotateImage(img, -15)
     #img_lr = rotateImage(img, 15)
+
     faces = self.face_cascade.detectMultiScale(img, 1.1, 3,
     	cv2.cv.CV_HAAR_SCALE_IMAGE, (20, 20))
     #faces_rr = face_cascade.detectMultiScale(img_rr, 1.1, 3,
