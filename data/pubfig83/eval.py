@@ -1,6 +1,7 @@
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
+import math
 
 from collections import defaultdict
 
@@ -17,12 +18,12 @@ import caffe
 
 from PIL import Image
 
-dir_name = sys.argv[1]
-print dir_name
+indir_name = sys.argv[1]
+print indir_name
 
 
-face_id_to_individual_path = '%s/face_id_to_individual.pickle' % dir_name
-person_id_to_trntst_path = '%s/person_id_to_trntst.pickle' % dir_name
+face_id_to_individual_path = '%s/face_id_to_individual.pickle' % indir_name
+person_id_to_trntst_path = '%s/person_id_to_trntst.pickle' % indir_name
 
 print face_id_to_individual_path
 print person_id_to_trntst_path
@@ -34,10 +35,41 @@ person_id_to_trntst = pickle.loads(open(person_id_to_trntst_path).read())
 
 score_type = sys.argv[2]
 
+outdir_name = indir_name + ',' + score_type
 
-def compscore(v, w, type='chi-square'):
+if not os.path.isdir(outdir_name):
+  os.makedirs(outdir_name)
+
+
+def compscore(v, w, type='normdot'):
   if type == 'dot':
     return v.dot(w)
+  elif type == 'normdot':
+    if np.max(v) > 0 and np.max(w) > 0:
+      v /= math.sqrt((v**2).sum())
+      w /= math.sqrt((w**2).sum())
+      return v.dot(w)
+    else:
+      return 0.0
+  elif type == 'histdot':  
+    if np.max(v) > 0 and np.max(w) > 0:
+      v /= v.sum()
+      w /= w.sum()
+      return v.dot(w)
+    else:
+      return 0.0
+  elif type == 'histint':
+    if np.max(v) > 0 and np.max(w) > 0:
+      v /= v.sum()
+      w /= w.sum()
+      return np.minimum(v, w).sum()
+    else:
+      return 0.0
+  elif type == 'int':
+    if np.max(v) > 0 and np.max(w) > 0:
+      return np.minimum(v, w).sum()
+    else:
+      return 0.0
   elif type == 'chi-square':
     sqdiff = (v-w)**2
     sum = v+w
@@ -101,7 +133,7 @@ def compconfusion(n_trn, score_type, person_id_to_trntst, h):
   return confmat, mean_acc
 
 
-h = h5py.File('%s/features.hdf5' % dir_name, 'r')
+h = h5py.File('%s/features.hdf5' % indir_name, 'r')
 
 n_trns = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20]
 mean_accs = list()
@@ -114,6 +146,6 @@ h.close()
 
 n_trn_vs_acc = dict(zip(n_trns, mean_accs))
 
-with open('%s/n_trn_vs_acc.pickle' % dir_name, 'w') as fh:
+with open('%s/n_trn_vs_acc.pickle' % outdir_name, 'w') as fh:
   pickle.dump(n_trn_vs_acc, fh)
 
