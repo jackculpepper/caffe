@@ -24,8 +24,8 @@ model_file = net_root + 'cfw_deploy_v5.prototxt'
 pretrained_file = net_root + subdirectory + 'cfw_iter_457000'
 mean_file = data_root + 'mean.npy'
 
-blob_name = 'ip2'
 blob_name = 'prob'
+blob_name = 'ip2'
 blob_name = 'ip1'
 blob_name = 'relu4'
 
@@ -92,6 +92,9 @@ person_id_to_trntst = dict()
 
 CELEB_LIST = filter(lambda x: not x.startswith('.'), os.listdir(SRC_DIR))
 
+#CELEB_LIST = ['Claudia_Schiffer', 'Jennifer_Love_Hewitt', 'Shakira']
+
+
 for c in CELEB_LIST:
   IMAGE_LIST = filter(lambda x: not x.startswith('.'), os.listdir(SRC_DIR + c))
 
@@ -143,17 +146,14 @@ for c in CELEB_LIST:
   X = np.vstack(feature_list)
 
   if blob_name == "ip2":
-    X = normalize_matrix(X, type='rowwise')
     X = normalize_matrix(X, type='global')
   if blob_name == "relu4":
-    X = normalize_matrix(X, type='rowwise')
     X = normalize_matrix(X, type='global')
   if blob_name == "ip1":
-    X = normalize_matrix(X, type='rowwise')
     X = normalize_matrix(X, type='global')
 
   X = np.uint8(X*255.0)
-  Image.fromarray(X).save('%s/f_' % outdir_name + c + '.png')
+  Image.fromarray(X).save('%s' % outdir_name + '/f_' + c + '.png')
 
 
   if False:
