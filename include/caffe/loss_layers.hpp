@@ -41,8 +41,15 @@ class AccuracyLayer : public Layer<Dtype> {
     return LayerParameter_LayerType_ACCURACY;
   }
 
-  virtual inline int ExactNumBottomBlobs() const { return 2; }
-  virtual inline int ExactNumTopBlobs() const { return 1; }
+  // AccuracyLayer takes 2-3 bottom Blobs; if there are 3 the second and third
+  // are compared to compute a 0/1 label.  (Otherwise the label comes directly
+  // from the second.)
+  virtual inline int ExactNumBottomBlobs() const { return -1; }
+  virtual inline int MinBottomBlobs() const { return 2; }
+  virtual inline int MaxBottomBlobs() const { return 3; }
+
+ private:
+  int ComputeLabel(const vector<Blob<Dtype>*>& bottom, int i);
 
  protected:
   /**
