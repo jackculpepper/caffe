@@ -94,6 +94,18 @@ int train() {
     FLAGS_gpu = solver_param.device_id();
   }
 
+  FILE *git_file_p = popen("git log -1", "r");
+  CHECK(git_file_p);
+  char buffer[1024];
+  char *line_p;
+  do {
+    line_p = fgets(buffer, sizeof(buffer), git_file_p);
+    if (line_p) LOG(INFO) << buffer;
+  } while (line_p);
+  pclose(git_file_p);
+
+
+
   // Set device id and mode
   if (FLAGS_gpu >= 0) {
     LOG(INFO) << "Use GPU with device ID " << FLAGS_gpu;
