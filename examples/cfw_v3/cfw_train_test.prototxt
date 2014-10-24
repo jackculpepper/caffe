@@ -11,6 +11,7 @@ layers {
     batch_size: 64
     scale: 0.00390625
     shuffle: false
+    mirror: true
   }
   include: { phase: TRAIN }
 }
@@ -42,6 +43,7 @@ layers {
     batch_size: 64
     scale: 0.00390625
     shuffle: false
+    mirror: true
   }
   include: { phase: TRAIN }
 }
