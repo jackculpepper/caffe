@@ -6,9 +6,9 @@ weight_decay: 0.0005
 lr_policy: "step"
 base_lr: 0.01
 gamma: 0.1
-stepsize: 30000
+stepsize: 10000
 display: 50
-max_iter: 100000
+max_iter: 30000
 snapshot: 5000
 snapshot_prefix: "snap/cfw_smax/snap"
 solver_mode: GPU
