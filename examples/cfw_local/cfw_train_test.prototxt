@@ -116,6 +116,7 @@ layers {
     }
     bias_filler {
       type: "constant"
+      value: 0.1
     }
   }
 }

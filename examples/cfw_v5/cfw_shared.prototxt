@@ -14,6 +14,7 @@ layers {
     }
     bias_filler {
       type: "constant"
+      value: 0.1
     }
   }
   param: "conv1_w"
@@ -63,6 +64,7 @@ layers {
     }
     bias_filler {
       type: "constant"
+      value: 0.1
     }
   }
   param: "conv2_w"
@@ -102,6 +104,7 @@ layers {
     }
     bias_filler {
       type: "constant"
+      value: 0.1
     }
   }
   param: "conv3_w"
@@ -143,6 +146,7 @@ layers {
     }
     bias_filler {
       type: "constant"
+      value: 0.1
     }
   }
   param: "conv4_w"
@@ -182,6 +186,7 @@ layers {
     }
     bias_filler {
       type: "constant"
+      value: 0.1
     }
   }
   param: "ip1_w"
@@ -207,6 +212,7 @@ layers {
     }
     bias_filler {
       type: "constant"
+      value: 0.1
     }
   }
   param: "ip2_w"
