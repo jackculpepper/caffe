@@ -1,0 +1,108 @@
+name: "lfw_test"
+
+layers {
+  name: "data_a"
+  type: IMAGE_DATA
+  top: "data_a"
+  top: "label_a"
+  image_data_param {
+    source: "data/lfw/lfw_tst_a.txt"
+    mean_file: "data/cfw/mean.binaryproto"
+    batch_size: 64
+    scale: 0.00390625
+    shuffle: false
+  }
+}
+
+layers {
+  name: "data_b"
+  type: IMAGE_DATA
+  top: "data_b"
+  top: "label_b"
+  image_data_param {
+    source: "data/lfw/lfw_tst_b.txt"
+    mean_file: "data/cfw/mean.binaryproto"
+    batch_size: 64
+    scale: 0.00390625
+    shuffle: false
+  }
+}
+
+
+layers {
+  type: IMPORT
+  name: "a"
+  import_param {
+    net: "examples/cfw_v5/lfw_shared.prototxt"
+    var { name: "bottom" value: "/data_a" }
+    var { name: "label" value: "/label_a" }
+  }
+}
+
+layers {
+  type: IMPORT
+  name: "b"
+  import_param {
+    net: "examples/cfw_v5/lfw_shared.prototxt"
+    var { name: "bottom" value: "/data_b" }
+    var { name: "label" value: "/label_b" }
+  }
+}
+
+
+layers {
+    name: "diff"
+    type: ELTWISE
+    eltwise_param {
+      coeff: 1
+      coeff: -1
+    }
+    bottom: "a/ip2"
+    bottom: "b/ip2"
+    top: "diff"
+}
+
+layers {
+    name: "absval"
+    type: ABSVAL
+    bottom: "diff"
+    top: "absval"
+}
+
+layers {
+  name: "ip3"
+  type: INNER_PRODUCT
+  bottom: "absval"
+  top: "ip3"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layers {
+  name: "siamese_hinge_loss"
+  type: HINGE_LOSS
+  bottom: "ip3"
+  bottom: "label_a"
+  bottom: "label_b"
+  top: "siamese_hinge_loss"
+  loss_weight: 0.1
+}
+
+layers {
+  name: "siamese_accuracy"
+  type: ACCURACY
+  bottom: "ip3"
+  bottom: "label_a"
+  bottom: "label_b"
+  top: "siamese_accuracy"
+}
+

@@ -1,0 +1,16 @@
+net: "examples/cfw_v5/cfw_train_test.prototxt"
+test_iter: 44
+test_net: "examples/cfw_v5/lfw_test.prototxt"
+test_iter: 91
+test_interval: 500
+base_lr: 0.005
+momentum: 0.9
+weight_decay: 0.0005
+lr_policy: "step"
+gamma: 0.1
+stepsize: 10000
+display: 100
+max_iter: 30000
+snapshot: 5000
+snapshot_prefix: "snap/cfw_v5/snap"
+solver_mode: GPU
