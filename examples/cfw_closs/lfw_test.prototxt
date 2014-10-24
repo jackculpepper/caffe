@@ -62,7 +62,7 @@ layers {
   bottom: "label_a"
   bottom: "label_b"
   top: "contrastive_loss"
-  loss_weight: 0.0
+  loss_weight: 0.1
 }
 
 
