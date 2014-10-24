@@ -1,0 +1,44 @@
+name: "cfw_train_test"
+
+layers {
+  name: "data_a"
+  type: IMAGE_DATA
+  top: "data_a"
+  top: "label_a"
+  image_data_param {
+    source: "data/cfw/cfw_train_random_a.txt"
+    mean_file: "data/cfw/mean.binaryproto"
+    batch_size: 64
+    scale: 0.00390625
+    shuffle: false
+    mirror: true
+  }
+  include: { phase: TRAIN }
+}
+
+layers {
+  name: "data_a"
+  type: IMAGE_DATA
+  top: "data_a"
+  top: "label_a"
+  image_data_param {
+    source: "data/cfw/cfw_test_a.txt"
+    mean_file: "data/cfw/mean.binaryproto"
+    batch_size: 64
+    scale: 0.00390625
+    shuffle: false
+    mirror: true
+  }
+  include: { phase: TEST }
+}
+
+layers {
+  type: IMPORT
+  name: "a"
+  import_param {
+    net: "examples/cfw_local_smax/cfw_shared.prototxt"
+    var { name: "bottom" value: "/data_a" }
+    var { name: "label" value: "/label_a" }
+  }
+}
+
