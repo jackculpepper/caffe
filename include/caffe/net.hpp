@@ -158,6 +158,9 @@ class Net {
   static bool StateMeetsRule(const NetState& state, const NetStateRule& rule,
       const string& layer_name);
 
+  // @brief Loads imports, for modular network definitions
+  static void LoadImports(const NetParameter& source, NetParameter* target);
+
  protected:
   // Helpers for Init.
   /// @brief Append a new input or top blob to the net.
@@ -183,7 +186,6 @@ class Net {
   void GetLearningRateAndWeightDecay();
 
   // @brief Loads imports, for modular network definitions
-  static void LoadImports(const NetParameter& source, NetParameter* target);
   static void LoadImports(const NetParameter& source, NetParameter* target,
       const string& pwd);
   // @brief Resolves a layer or blob name, e.g. "../data"

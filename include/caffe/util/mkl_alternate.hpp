@@ -9,6 +9,8 @@
 
 extern "C" {
 #include <cblas.h>
+// OpenBLAS can define this, which prevents OpenCV headers from compiling
+#undef FLOAT
 }
 #include <math.h>
 

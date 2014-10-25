@@ -8,12 +8,14 @@
 #include <boost/python.hpp>
 #include <boost/shared_ptr.hpp>
 #include <numpy/arrayobject.h>
+#include <google/protobuf/text_format.h>
 
 // these need to be included after boost on OS X
 #include <string>  // NOLINT(build/include_order)
 #include <vector>  // NOLINT(build/include_order)
 
 #include "caffe/caffe.hpp"
+#include "caffe/util/upgrade_proto.hpp"
 
 namespace bp = boost::python;
 using boost::shared_ptr;
@@ -93,6 +95,29 @@ class PyNet {
 
   void Init(string param_file);
 
+  // Load proto file with its imports
+  static string LoadParamWithImports(const string& param_file) {
+    NetParameter param;
+    ReadNetParamsFromTextFileOrDie(param_file, &param);
+    NetParameter expanded(param);
+    Net<float>::LoadImports(param, &expanded);
+    string s;
+    CHECK(google::protobuf::TextFormat::PrintToString(expanded, &s));
+    return s;
+  }
+
+  static bool glogInitialized_;
+
+  static void InitGlog(string file) {
+    google::SetLogDestination(google::INFO, file.c_str());
+    if(!glogInitialized_) {
+      glogInitialized_ = true;
+      FLAGS_logtostderr = 0;
+      google::SetLogSymlink(google::INFO, "");
+      ::google::InitGoogleLogging("");
+      ::google::InstallFailureSignalHandler();
+    }
+  }
 
   // Generate Python exceptions for badly shaped or discontiguous arrays.
   inline void check_contiguous_array(PyArrayObject* arr, string name,
