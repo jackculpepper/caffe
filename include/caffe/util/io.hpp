@@ -52,6 +52,8 @@ inline void MakeTempDir(string* temp_dirname) {
   delete temp_dirname_cstr;
 }
 
+string ReadFile(const string& filename);
+
 bool ReadProtoFromTextFile(const char* filename, Message* proto);
 
 inline bool ReadProtoFromTextFile(const string& filename, Message* proto) {

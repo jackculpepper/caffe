@@ -246,9 +246,10 @@ message LayerParameter {
     HINGE_LOSS = 28;
     IM2COL = 11;
     IMAGE_DATA = 12;
+    IMPORT = 51;
     INFOGAIN_LOSS = 13;
     INNER_PRODUCT = 14;
-    LOCAL = 39;
+    LOCAL = 50;
     LRN = 15;
     MEMORY_DATA = 29;
     MULTINOMIAL_LOGISTIC_LOSS = 16;
@@ -308,6 +309,7 @@ message LayerParameter {
   optional HDF5OutputParameter hdf5_output_param = 14;
   optional HingeLossParameter hinge_loss_param = 29;
   optional ImageDataParameter image_data_param = 15;
+  optional ImportParameter import_param = 103;
   optional InfogainLossParameter infogain_loss_param = 16;
   optional InnerProductParameter inner_product_param = 17;
   optional LocalParameter local_param = 102;
@@ -551,6 +553,20 @@ message ImageDataParameter {
   // DEPRECATED. See TransformationParameter. Specify if we want to randomly mirror
   // data.
   optional bool mirror = 6 [default = false];
+}
+
+message Pair {
+  required string name = 1;
+  required string value = 2;
+}
+
+// Message that stores parameters used by ImportLayer
+message ImportParameter {
+  // Proto file to import
+  required string net = 1;
+  // Variable names to replace before importing the file. Variables can
+  // be used in the file in this format: ${name}
+  repeated Pair var = 2;
 }
 
 // Message that stores parameters InfogainLossLayer

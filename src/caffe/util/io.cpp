@@ -28,6 +28,18 @@ using google::protobuf::io::ZeroCopyOutputStream;
 using google::protobuf::io::CodedOutputStream;
 using google::protobuf::Message;
 
+std::string ReadFile(const string& filename) {
+  std::ifstream in(filename.c_str(), std::ios::in | std::ios::binary);
+  CHECK(in) << "Failed to read file: " << filename;
+  std::string contents;
+  in.seekg(0, std::ios::end);
+  contents.resize(in.tellg());
+  in.seekg(0, std::ios::beg);
+  in.read(&contents[0], contents.size());
+  in.close();
+  return contents;
+}
+
 bool ReadProtoFromTextFile(const char* filename, Message* proto) {
   int fd = open(filename, O_RDONLY);
   CHECK_NE(fd, -1) << "File not found: " << filename;
