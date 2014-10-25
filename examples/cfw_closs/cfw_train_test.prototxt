@@ -86,24 +86,6 @@ layers {
 
 
 layers {
-  name: "contrastive_loss"
-  type: CONTRASTIVE_LOSS
-  contrastive_loss_param {
-    margin: 1.0
-    label_type: CATEGORY
-  }
-  bottom: "a/ip2"
-  bottom: "b/ip2"
-  bottom: "label_a"
-  bottom: "label_b"
-  top: "contrastive_loss"
-  loss_weight: 0.1
-}
-
-
-
-
-layers {
   name: "diff"
   type: ELTWISE
   eltwise_param {
