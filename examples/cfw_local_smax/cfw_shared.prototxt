@@ -151,6 +151,8 @@ layers {
       value: 0.1
     }
   }
+  param: "local1_w"
+  param: "local1_b"
 }
 layers {
   name: "relu4"
