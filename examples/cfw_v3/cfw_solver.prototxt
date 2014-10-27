@@ -8,9 +8,9 @@ momentum: 0.9
 weight_decay: 0.0005
 lr_policy: "step"
 gamma: 0.1
-stepsize: 10000
+stepsize: 40000
 display: 100
-max_iter: 30000
+max_iter: 120000
 snapshot: 5000
 snapshot_prefix: "snap/cfw_v3/snap"
 solver_mode: GPU

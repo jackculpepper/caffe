@@ -57,7 +57,7 @@ layers {
   blobs_lr: 2
   convolution_param {
     num_output: 40
-    kernel_size: 11
+    kernel_size: 5
     stride: 1
     weight_filler {
       type: "xavier"
@@ -97,7 +97,7 @@ layers {
   blobs_lr: 2
   convolution_param {
     num_output: 60
-    kernel_size: 11
+    kernel_size: 3
     stride: 1
     weight_filler {
       type: "xavier"
