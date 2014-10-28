@@ -109,7 +109,7 @@ layers {
   bottom: "label_a"
   bottom: "label_b"
   top: "siamese_hinge_loss"
-  loss_weight: 0.1
+  loss_weight: 0.5
 }
 
 layers {
