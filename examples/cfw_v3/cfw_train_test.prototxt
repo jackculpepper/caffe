@@ -92,8 +92,8 @@ layers {
       coeff: 1
       coeff: -1
     }
-    bottom: "a/ip2"
-    bottom: "b/ip2"
+    bottom: "a/ip1"
+    bottom: "b/ip1"
     top: "diff"
 }
 
