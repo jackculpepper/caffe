@@ -114,24 +114,33 @@ layers {
   type: INNER_PRODUCT
   bottom: "diff_squared"
   top: "ip3"
-  blobs_lr: 1
-  blobs_lr: 2
+  blobs_lr: 0
+  blobs_lr: 0
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
-      type: "xavier"
+      type: "constant"
+      value: 1.0
     }
     bias_filler {
       type: "constant"
-      value: 0.1
+      value: 0.0
     }
   }
 }
 
 layers {
+  name: "concat"
+  type: CONCAT
+  bottom: "ip3"
+  bottom: "ip3"
+  top: "concat"
+}
+
+layers {
   name: "siamese_hinge_loss"
   type: HINGE_LOSS
-  bottom: "ip3"
+  bottom: "concat"
   bottom: "label_a"
   bottom: "label_b"
   top: "siamese_hinge_loss"
@@ -141,7 +150,7 @@ layers {
 layers {
   name: "siamese_accuracy"
   type: ACCURACY
-  bottom: "ip3"
+  bottom: "concat"
   bottom: "label_a"
   bottom: "label_b"
   top: "siamese_accuracy"
