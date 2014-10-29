@@ -12,5 +12,5 @@ stepsize: 10000
 display: 100
 max_iter: 30000
 snapshot: 5000
-snapshot_prefix: "snap/cfw_closs/snap"
+snapshot_prefix: "snap/cfw_closs.kway/snap"
 solver_mode: GPU
