@@ -1,5 +1,22 @@
 
 
+
+layers {
+  name: "contrastive_loss"
+  type: CONTRASTIVE_LOSS
+  contrastive_loss_param {
+    margin: 1.0
+    label_type: CATEGORY
+  }
+  bottom: "/a/ip1"
+  bottom: "/b/ip1"
+  bottom: "/label_a"
+  bottom: "/label_b"
+  top: "contrastive_loss"
+  loss_weight: 0.1
+}
+
+
 layers {
   name: "diff"
   type: ELTWISE
@@ -69,7 +86,7 @@ layers {
   bottom: "ip4"
   bottom: "/siamese_label/label_same"
   top: "siamese_softmax_loss"
-  loss_weight: 0.4
+  loss_weight: 0.3
 }
 
 layers {
