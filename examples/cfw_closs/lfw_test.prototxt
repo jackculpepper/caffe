@@ -50,6 +50,55 @@ layers {
 }
 
 
+
+layers {
+  name: "diff_label_ab"
+  type: ELTWISE
+  eltwise_param {
+    coeff: 1
+    coeff: -1
+  }
+  bottom: "label_a"
+  bottom: "label_b"
+  top: "diff_label_ab"
+}
+
+layers {
+  name: "diff_label_ba"
+  type: ELTWISE
+  eltwise_param {
+    coeff: 1
+    coeff: -1
+  }
+  bottom: "label_b"
+  bottom: "label_a"
+  top: "diff_label_ba"
+}
+
+layers {
+  name: "diff_label_ab_thresh"
+  type: THRESHOLD
+  bottom: "diff_label_ab"
+  top: "diff_label_ab_thresh"
+}
+
+layers {
+  name: "diff_label_ba_thresh"
+  type: THRESHOLD
+  bottom: "diff_label_ba"
+  top: "diff_label_ba_thresh"
+}
+
+
+layers {
+  name: "label_same"
+  type: ELTWISE
+  bottom: "diff_label_ab_thresh"
+  bottom: "diff_label_ba_thresh"
+  top: "label_same"
+}
+
+
 layers {
   name: "diff"
   type: ELTWISE
@@ -95,29 +144,39 @@ layers {
 }
 
 layers {
-  name: "concat"
-  type: CONCAT
+  name: "ip4"
+  type: INNER_PRODUCT
   bottom: "ip3"
-  bottom: "ip3"
-  top: "concat"
+  top: "ip4"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
 }
 
 layers {
-  name: "siamese_hinge_loss"
-  type: HINGE_LOSS
-  bottom: "concat"
-  bottom: "label_a"
-  bottom: "label_b"
-  top: "siamese_hinge_loss"
+  name: "siamese_softmax_loss"
+  type: SOFTMAX_LOSS
+  bottom: "ip4"
+  bottom: "label_same"
+  top: "siamese_softmax_loss"
   loss_weight: 0.5
 }
 
 layers {
   name: "siamese_accuracy"
   type: ACCURACY
-  bottom: "ip3"
-  bottom: "label_a"
-  bottom: "label_b"
+  bottom: "ip4"
+  bottom: "label_same"
   top: "siamese_accuracy"
 }
+
 
