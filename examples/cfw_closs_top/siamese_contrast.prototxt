@@ -86,7 +86,7 @@ layers {
   bottom: "ip4"
   bottom: "/siamese_label/label_same"
   top: "siamese_softmax_loss"
-  loss_weight: 0.0
+  loss_weight: 1.0
 }
 
 layers {
