@@ -1,0 +1,124 @@
+name: "cfw_train_test"
+
+layers {
+  name: "data_a"
+  type: IMAGE_DATA
+  top: "data_a"
+  top: "label_a"
+  image_data_param {
+    source: "data/cfw/cfw_train_random_a.txt"
+    mean_file: "data/cfw/mean.binaryproto"
+    batch_size: 64
+    scale: 0.00390625
+    shuffle: false
+  }
+  include: { phase: TRAIN }
+}
+
+layers {
+  name: "data_a"
+  type: IMAGE_DATA
+  top: "data_a"
+  top: "label_a"
+  image_data_param {
+    source: "data/cfw/cfw_test_a.txt"
+    mean_file: "data/cfw/mean.binaryproto"
+    batch_size: 64
+    scale: 0.00390625
+    shuffle: false
+  }
+  include: { phase: TEST }
+}
+
+
+layers {
+  name: "data_b"
+  type: IMAGE_DATA
+  top: "data_b"
+  top: "label_b"
+  image_data_param {
+    source: "data/cfw/cfw_train_random_b.txt"
+    mean_file: "data/cfw/mean.binaryproto"
+    batch_size: 64
+    scale: 0.00390625
+    shuffle: false
+  }
+  include: { phase: TRAIN }
+}
+
+layers {
+  name: "data_b"
+  type: IMAGE_DATA
+  top: "data_b"
+  top: "label_b"
+  image_data_param {
+    source: "data/cfw/cfw_test_b.txt"
+    mean_file: "data/cfw/mean.binaryproto"
+    batch_size: 64
+    scale: 0.00390625
+    shuffle: false
+  }
+  include: { phase: TEST }
+}
+
+
+layers {
+  type: IMPORT
+  name: "a"
+  import_param {
+    net: "examples/cfw_closs_top/cfw_shared.prototxt"
+    var { name: "bottom" value: "/data_a" }
+    var { name: "label" value: "/label_a" }
+  }
+}
+
+layers {
+  type: IMPORT
+  name: "b"
+  import_param {
+    net: "examples/cfw_closs_top/cfw_shared.prototxt"
+    var { name: "bottom" value: "/data_b" }
+    var { name: "label" value: "/label_b" }
+  }
+}
+
+layers {
+  type: IMPORT
+  name: "a_loss"
+  import_param {
+    net: "examples/cfw_closs_top/cfw_kway.prototxt"
+    var { name: "feat" value: "/a/ip1" }
+    var { name: "label" value: "/label_a" }
+  }
+}
+
+layers {
+  type: IMPORT
+  name: "b_loss"
+  import_param {
+    net: "examples/cfw_closs_top/cfw_kway.prototxt"
+    var { name: "feat" value: "/b/ip1" }
+    var { name: "label" value: "/label_b" }
+  }
+}
+
+
+
+
+layers {
+  type: IMPORT
+  name: "siamese_label"
+  import_param {
+    net: "examples/cfw_closs_top/siamese_label.prototxt"
+  }
+}
+
+layers {
+  type: IMPORT
+  name: "siamese_contrast"
+  import_param {
+    net: "examples/cfw_closs_top/siamese_contrast.prototxt"
+  }
+}
+
+
