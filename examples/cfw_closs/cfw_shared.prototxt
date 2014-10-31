@@ -137,7 +137,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   inner_product_param {
-    num_output: 1000
+    num_output: 100
     weight_filler {
       type: "xavier"
     }
