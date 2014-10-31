@@ -31,11 +31,7 @@ layers {
 
 layers {
   name: "diff_squared"
-  type: ELTWISE
-  eltwise_param {
-    operation: PROD
-  }
-  bottom: "diff"
+  type: ABSVAL
   bottom: "diff"
   top: "diff_squared"
 }
@@ -49,7 +45,7 @@ layers {
   blobs_lr: 0
   blobs_lr: 0
   inner_product_param {
-    num_output: 1
+    num_output: 10
     weight_filler {
       type: "constant"
       value: 1.0

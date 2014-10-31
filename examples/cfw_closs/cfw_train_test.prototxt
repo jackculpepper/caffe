@@ -6,7 +6,7 @@ layers {
   top: "data_a"
   top: "label_a"
   image_data_param {
-    source: "data/cfw/cfw_train_random_a.txt"
+    source: "data/cfw/cfw_train_random_a_trunc.txt"
     mean_file: "data/cfw/mean.binaryproto"
     batch_size: 64
     scale: 0.00390625
@@ -21,7 +21,7 @@ layers {
   top: "data_a"
   top: "label_a"
   image_data_param {
-    source: "data/cfw/cfw_test_a.txt"
+    source: "data/cfw/cfw_train_random_a_trunc.txt"
     mean_file: "data/cfw/mean.binaryproto"
     batch_size: 64
     scale: 0.00390625
@@ -37,7 +37,7 @@ layers {
   top: "data_b"
   top: "label_b"
   image_data_param {
-    source: "data/cfw/cfw_train_random_b.txt"
+    source: "data/cfw/cfw_train_random_b_trunc.txt"
     mean_file: "data/cfw/mean.binaryproto"
     batch_size: 64
     scale: 0.00390625
@@ -52,7 +52,7 @@ layers {
   top: "data_b"
   top: "label_b"
   image_data_param {
-    source: "data/cfw/cfw_test_b.txt"
+    source: "data/cfw/cfw_train_random_b_trunc.txt"
     mean_file: "data/cfw/mean.binaryproto"
     batch_size: 64
     scale: 0.00390625
