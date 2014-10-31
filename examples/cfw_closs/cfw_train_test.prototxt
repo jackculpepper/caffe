@@ -103,16 +103,6 @@ layers {
 }
 
 
-
-
-layers {
-  type: IMPORT
-  name: "siamese_label"
-  import_param {
-    net: "examples/cfw_closs/siamese_label.prototxt"
-  }
-}
-
 layers {
   type: IMPORT
   name: "siamese_contrast"
