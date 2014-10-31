@@ -94,6 +94,16 @@ layers {
 
 layers {
   type: IMPORT
+  name: "a_loss"
+  import_param {
+    net: "examples/cfw_closs/cfw_kway.prototxt"
+    var { name: "feat" value: "/b/ip1" }
+    var { name: "label" value: "/label_b" }
+  }
+}
+
+layers {
+  type: IMPORT
   name: "siamese_contrast"
   import_param {
     net: "examples/cfw_closs/siamese_contrast.prototxt"
