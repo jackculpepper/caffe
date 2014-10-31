@@ -9,7 +9,7 @@ weight_decay: 0.0005
 lr_policy: "step"
 gamma: 0.1
 stepsize: 10000
-display: 100
+display: 10
 max_iter: 50000
 snapshot: 5000
 snapshot_prefix: "snap/cfw_closs_top/snap"
