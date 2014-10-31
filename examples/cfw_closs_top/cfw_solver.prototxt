@@ -1,8 +1,6 @@
 net: "examples/cfw_closs_top/cfw_train_test.prototxt"
-test_iter: 44
-test_net: "examples/cfw_closs_top/lfw_test.prototxt"
-test_iter: 91
-test_interval: 500
+test_iter: 100
+test_interval: 50
 base_lr: 1.0
 momentum: 0.9
 weight_decay: 0.0005
