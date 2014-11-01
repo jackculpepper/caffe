@@ -18,14 +18,14 @@ layers {
 layers {
   name: "prob_a"
   type: SOFTMAX
-  bottom: "/a_loss/ip2"
+  bottom: "ip1"
   top: "prob_a"
 }
 
 layers {
   name: "prob_b"
   type: SOFTMAX
-  bottom: "/b_loss/ip2"
+  bottom: "ip1"
   top: "prob_b"
 }
 
