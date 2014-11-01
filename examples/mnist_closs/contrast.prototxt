@@ -57,12 +57,18 @@ layers {
   top: "relu4_ba"
 }
 
+layers {
+  name: "diff_concat"
+  type: CONCAT
+  bottom: "diff_ab"
+  bottom: "diff_ba"
+  top: "diff_concat"
+}
 
 layers {
   name: "ip3"
   type: INNER_PRODUCT
-  bottom: "diff_ab"
-  bottom: "diff_ba"
+  bottom: "diff_concat"
   top: "ip3"
   blobs_lr: 1
   blobs_lr: 2
