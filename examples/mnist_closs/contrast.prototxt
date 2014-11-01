@@ -15,7 +15,19 @@ layers {
 }
 
 
+layers {
+  name: "prob_a"
+  type: SOFTMAX
+  bottom: "/a_loss/ip2"
+  top: "prob_a"
+}
 
+layers {
+  name: "prob_b"
+  type: SOFTMAX
+  bottom: "/b_loss/ip2"
+  top: "prob_b"
+}
 
 
 layers {
@@ -25,8 +37,8 @@ layers {
     coeff: 1
     coeff: -1
   }
-  bottom: "/a_loss/ip2"
-  bottom: "/b_loss/ip2"
+  bottom: "prob_a"
+  bottom: "prob_b"
   top: "diff_ab"
 }
 
