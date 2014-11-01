@@ -9,7 +9,7 @@ layers {
     source: "examples/mnist/mnist_train_a.txt"
     batch_size: 100
     scale: 0.00390625
-    shuffle: false
+    shuffle: true
   }
   include: { phase: TRAIN }
 }
@@ -38,7 +38,7 @@ layers {
     source: "examples/mnist/mnist_train_b.txt"
     batch_size: 100
     scale: 0.00390625
-    shuffle: false
+    shuffle: true
   }
   include: { phase: TRAIN }
 }
