@@ -101,7 +101,7 @@ layers {
 
 layers {
   type: IMPORT
-  name: "siamese_label"
+  name: "same_label"
   import_param {
     net: "examples/mnist_closs/same_label.prototxt"
   }
