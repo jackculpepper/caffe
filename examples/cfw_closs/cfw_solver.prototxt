@@ -1,7 +1,7 @@
 net: "examples/cfw_closs/cfw_train_test.prototxt"
 test_iter: 100
 test_interval: 50
-base_lr: 0.5
+base_lr: 0.01
 momentum: 0.9
 weight_decay: 0.0005
 lr_policy: "step"
