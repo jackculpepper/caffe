@@ -25,8 +25,8 @@ layers {
     coeff: 1
     coeff: -1
   }
-  bottom: "/a/ip1"
-  bottom: "/b/ip1"
+  bottom: "/a/ip2"
+  bottom: "/b/ip2"
   top: "diff_ab"
 }
 
@@ -37,8 +37,8 @@ layers {
     coeff: -1
     coeff: 1
   }
-  bottom: "/a/ip1"
-  bottom: "/b/ip1"
+  bottom: "/a/ip2"
+  bottom: "/b/ip2"
   top: "diff_ba"
 }
 
