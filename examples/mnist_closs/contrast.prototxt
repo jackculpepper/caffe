@@ -73,6 +73,33 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   inner_product_param {
+    num_output: 50
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+}
+
+layers {
+  name: "relu5"
+  type: RELU
+  bottom: "ip3"
+  top: "ip3"
+}
+
+
+layers {
+  name: "ip4"
+  type: INNER_PRODUCT
+  bottom: "ip3"
+  top: "ip4"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
     num_output: 2
     weight_filler {
       type: "xavier"
@@ -83,19 +110,22 @@ layers {
     }
   }
 }
+
+
+
 layers {
   name: "binary_accuracy"
   type: ACCURACY
-  bottom: "ip3"
+  bottom: "ip4"
   bottom: "/same_label/same_label"
   top: "binary_accuracy"
 }
 layers {
   name: "binary_softmax_loss"
   type: SOFTMAX_LOSS
-  bottom: "ip3"
+  bottom: "ip4"
   bottom: "/same_label/same_label"
   top: "binary_softmax_loss"
-  loss_weight: 0.0
+  loss_weight: 0.5
 }
 
