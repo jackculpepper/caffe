@@ -1,0 +1,37 @@
+
+layers {
+  name: "ip2"
+  type: INNER_PRODUCT
+  bottom: "${feat}"
+  top: "ip2"
+  blobs_lr: 0
+  blobs_lr: 0
+  inner_product_param {
+    num_output: 10
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "ip2_w"
+  param: "ip2_b"
+}
+layers {
+  name: "kway_accuracy"
+  type: ACCURACY
+  bottom: "ip2"
+  bottom: "${label}"
+  top: "kway_accuracy"
+}
+layers {
+  name: "softmax_loss"
+  type: SOFTMAX_LOSS
+  bottom: "ip2"
+  bottom: "${label}"
+  top: "softmax_loss"
+  loss_weight: 0.5
+}
+

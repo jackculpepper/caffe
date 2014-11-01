@@ -1,0 +1,89 @@
+name: "mnist_train_test"
+
+layers {
+  name: "data_a"
+  type: IMAGE_DATA
+  top: "data_a"
+  top: "label_a"
+  image_data_param {
+    source: "examples/mnist/mnist_train_a.txt"
+    batch_size: 100
+    scale: 0.00390625
+    shuffle: false
+  }
+  include: { phase: TRAIN }
+}
+
+layers {
+  name: "data_a"
+  type: IMAGE_DATA
+  top: "data_a"
+  top: "label_a"
+  image_data_param {
+    source: "examples/mnist/mnist_test_a.txt"
+    batch_size: 100
+    scale: 0.00390625
+    shuffle: false
+  }
+  include: { phase: TEST }
+}
+
+
+layers {
+  name: "data_b"
+  type: IMAGE_DATA
+  top: "data_b"
+  top: "label_b"
+  image_data_param {
+    source: "examples/mnist/mnist_train_b.txt"
+    batch_size: 100
+    scale: 0.00390625
+    shuffle: false
+  }
+  include: { phase: TRAIN }
+}
+
+layers {
+  name: "data_b"
+  type: IMAGE_DATA
+  top: "data_b"
+  top: "label_b"
+  image_data_param {
+    source: "examples/mnist/mnist_test_b.txt"
+    batch_size: 100
+    scale: 0.00390625
+    shuffle: false
+  }
+  include: { phase: TEST }
+}
+
+
+layers {
+  type: IMPORT
+  name: "a"
+  import_param {
+    net: "examples/mnist_closs/shared.prototxt"
+    var { name: "bottom" value: "/data_a" }
+    var { name: "label" value: "/label_a" }
+  }
+}
+
+layers {
+  type: IMPORT
+  name: "b"
+  import_param {
+    net: "examples/mnist_closs/shared.prototxt"
+    var { name: "bottom" value: "/data_b" }
+    var { name: "label" value: "/label_b" }
+  }
+}
+
+layers {
+  type: IMPORT
+  name: "contrast"
+  import_param {
+    net: "examples/mnist_closs/contrast.prototxt"
+  }
+}
+
+
