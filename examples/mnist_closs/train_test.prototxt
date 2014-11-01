@@ -78,6 +78,29 @@ layers {
   }
 }
 
+
+layers {
+  type: IMPORT
+  name: "a_loss"
+  import_param {
+    net: "examples/mnist_closs/kway.prototxt"
+    var { name: "feat" value: "/a/ip1" }
+    var { name: "label" value: "/label_a" }
+  }
+}
+
+layers {
+  type: IMPORT
+  name: "b_loss"
+  import_param {
+    net: "examples/mnist_closs/kway.prototxt"
+    var { name: "feat" value: "/b/ip1" }
+    var { name: "label" value: "/label_b" }
+  }
+}
+
+
+
 layers {
   type: IMPORT
   name: "contrast"
