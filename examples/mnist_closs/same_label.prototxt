@@ -38,10 +38,10 @@ layers {
 }
 
 layers {
-  name: "label_same"
+  name: "same_label"
   type: ELTWISE
   bottom: "diff_label_ab_thresh"
   bottom: "diff_label_ba_thresh"
-  top: "label_same"
+  top: "same_label"
 }
 

@@ -84,7 +84,7 @@ layers {
   pooling_param {
     pool: MAX
     kernel_size: 2
-    stride: 2
+    stride: 1
   }
 }
 
@@ -124,7 +124,7 @@ layers {
   pooling_param {
     pool: MAX
     kernel_size: 2
-    stride: 2
+    stride: 1
   }
 }
 layers {

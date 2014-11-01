@@ -11,7 +11,85 @@ layers {
   bottom: "/label_a"
   bottom: "/label_b"
   top: "contrastive_loss"
-  loss_weight: 1.0
+  loss_weight: 0.0
 }
 
+
+
+
+
+layers {
+  name: "diff"
+  type: ELTWISE
+  eltwise_param {
+    coeff: 1
+    coeff: -1
+  }
+  bottom: "/a/ip1"
+  bottom: "/b/ip1"
+  top: "diff_ab"
+}
+
+layers {
+  name: "diff"
+  type: ELTWISE
+  eltwise_param {
+    coeff: -1
+    coeff: 1
+  }
+  bottom: "/a/ip1"
+  bottom: "/b/ip1"
+  top: "diff_ba"
+}
+
+
+layers {
+  name: "relu4_ab"
+  type: RELU
+  bottom: "diff_ab"
+  top: "relu4_ab"
+}
+
+layers {
+  name: "relu4_ba"
+  type: RELU
+  bottom: "diff_ba"
+  top: "relu4_ba"
+}
+
+
+layers {
+  name: "ip3"
+  type: INNER_PRODUCT
+  bottom: "diff_ab"
+  bottom: "diff_ba"
+  top: "ip3"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+}
+layers {
+  name: "binary_accuracy"
+  type: ACCURACY
+  bottom: "ip3"
+  bottom: "/siamese_label/label_same"
+  top: "binary_accuracy"
+}
+layers {
+  name: "binary_softmax_loss"
+  type: SOFTMAX_LOSS
+  bottom: "ip3"
+  bottom: "/same_label/label_same"
+  top: "binary_softmax_loss"
+  loss_weight: 0.5
+}
 
