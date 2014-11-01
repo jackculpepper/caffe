@@ -47,14 +47,14 @@ layers {
   name: "relu4_ab"
   type: RELU
   bottom: "diff_ab"
-  top: "relu4_ab"
+  top: "diff_ab"
 }
 
 layers {
   name: "relu4_ba"
   type: RELU
   bottom: "diff_ba"
-  top: "relu4_ba"
+  top: "diff_ba"
 }
 
 layers {
