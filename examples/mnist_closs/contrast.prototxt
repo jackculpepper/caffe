@@ -96,6 +96,6 @@ layers {
   bottom: "ip3"
   bottom: "/same_label/same_label"
   top: "binary_softmax_loss"
-  loss_weight: 0.5
+  loss_weight: 0.0
 }
 
