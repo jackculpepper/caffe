@@ -81,14 +81,14 @@ layers {
   name: "binary_accuracy"
   type: ACCURACY
   bottom: "ip3"
-  bottom: "/siamese_label/label_same"
+  bottom: "/same_label/same_label"
   top: "binary_accuracy"
 }
 layers {
   name: "binary_softmax_loss"
   type: SOFTMAX_LOSS
   bottom: "ip3"
-  bottom: "/same_label/label_same"
+  bottom: "/same_label/same_label"
   top: "binary_softmax_loss"
   loss_weight: 0.5
 }
