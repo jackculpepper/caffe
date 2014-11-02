@@ -3,7 +3,7 @@ test_iter: 44
 test_net: "examples/cfw_diffnet/lfw_test.prototxt"
 test_iter: 91
 test_interval: 50
-base_lr: 0.01
+base_lr: 0.03
 momentum: 0.9
 weight_decay: 0.0005
 lr_policy: "step"
