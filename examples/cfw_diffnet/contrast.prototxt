@@ -49,8 +49,8 @@ layers {
     coeff: -1
     coeff: 1
   }
-  bottom: "/a_loss/ip2"
-  bottom: "/b_loss/ip2"
+  bottom: "prob_a"
+  bottom: "prob_b"
   top: "diff_ba"
 }
 
