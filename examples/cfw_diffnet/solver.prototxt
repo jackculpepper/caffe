@@ -1,0 +1,14 @@
+net: "examples/cfw_diffnet/train_test.prototxt"
+test_iter: 44
+test_interval: 50
+base_lr: 0.01
+momentum: 0.9
+weight_decay: 0.0005
+lr_policy: "step"
+gamma: 0.1
+stepsize: 20000
+display: 10
+max_iter: 60000
+snapshot: 5000
+snapshot_prefix: "snap/cfw_diffnet/snap"
+solver_mode: GPU
