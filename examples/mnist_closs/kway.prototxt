@@ -4,8 +4,8 @@ layers {
   type: INNER_PRODUCT
   bottom: "${feat}"
   top: "ip2"
-  blobs_lr: 0
-  blobs_lr: 0
+  blobs_lr: 1
+  blobs_lr: 2
   inner_product_param {
     num_output: 10
     weight_filler {
