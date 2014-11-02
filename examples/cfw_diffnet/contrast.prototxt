@@ -1,21 +1,5 @@
 
 layers {
-  name: "contrastive_loss"
-  type: CONTRASTIVE_LOSS
-  contrastive_loss_param {
-    margin: 1.0
-    label_type: CATEGORY
-  }
-  bottom: "/a/ip1"
-  bottom: "/b/ip1"
-  bottom: "/label_a"
-  bottom: "/label_b"
-  top: "contrastive_loss"
-  loss_weight: 0.0
-}
-
-
-layers {
   name: "prob_a"
   type: SOFTMAX
   bottom: "/a/ip1"
@@ -29,6 +13,20 @@ layers {
   top: "prob_b"
 }
 
+layers {
+  name: "contrastive_loss"
+  type: CONTRASTIVE_LOSS
+  contrastive_loss_param {
+    margin: 1.0
+    label_type: CATEGORY
+  }
+  bottom: "prob_a"
+  bottom: "prob_b"
+  bottom: "/label_a"
+  bottom: "/label_b"
+  top: "contrastive_loss"
+  loss_weight: 0.0
+}
 
 layers {
   name: "diff"
