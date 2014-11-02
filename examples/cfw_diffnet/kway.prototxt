@@ -40,6 +40,6 @@ layers {
   bottom: "ip2"
   bottom: "${label}"
   top: "softmax_loss"
-  loss_weight: 0.5
+  loss_weight: 0.1
 }
 
