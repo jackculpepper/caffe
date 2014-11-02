@@ -3,7 +3,7 @@ test_iter: 44
 test_net: "examples/cfw_diffnet/lfw_test.prototxt"
 test_iter: 91
 test_interval: 50
-base_lr: 0.05
+base_lr: 0.01
 momentum: 0.9
 weight_decay: 0.0005
 lr_policy: "step"
@@ -12,5 +12,5 @@ stepsize: 30000
 display: 10
 max_iter: 90000
 snapshot: 5000
-snapshot_prefix: "snap/cfw_diffnet/kway"
+snapshot_prefix: "snap/cfw_diffnet/kbway"
 solver_mode: GPU
