@@ -138,6 +138,6 @@ layers {
   bottom: "ip4"
   bottom: "/same_label/same_label"
   top: "binary_softmax_loss"
-  loss_weight: 0.0
+  loss_weight: 0.5
 }
 
