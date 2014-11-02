@@ -12,5 +12,5 @@ stepsize: 30000
 display: 10
 max_iter: 90000
 snapshot: 5000
-snapshot_prefix: "snap/cfw_diffnet/snap"
+snapshot_prefix: "snap/cfw_diffnet/kway"
 solver_mode: GPU
