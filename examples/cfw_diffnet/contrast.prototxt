@@ -131,11 +131,11 @@ layers {
   top: "binary_accuracy"
 }
 layers {
-  name: "binary_hinge_loss"
-  type: HINGE_LOSS
+  name: "binary_softmax_loss"
+  type: SOFTMAX_LOSS
   bottom: "ip4"
   bottom: "/same_label/same_label"
-  top: "binary_hinge_loss"
+  top: "binary_softmax_loss"
   loss_weight: 0.1
 }
 
