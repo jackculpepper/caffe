@@ -96,7 +96,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   convolution_param {
-    num_output: 60
+    num_output: 200
     kernel_size: 3
     stride: 1
     weight_filler {
