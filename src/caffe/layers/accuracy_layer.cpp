@@ -11,6 +11,23 @@
 namespace caffe {
 
 template <typename Dtype>
+int AccuracyLayer<Dtype>::ComputeLabel(const vector<Blob<Dtype>*>& bottom, int i) {
+  int label;
+  if (bottom.size() == 2) {
+    label = static_cast<int>(bottom[1]->cpu_data()[i]);
+  } else {  // bottom.size() == 3
+    // label == 1 if bottom[1] == bottom[2] (same)
+    // label == 0 if bottom[1] != bottom[2] (not same)
+    label = (bottom[1]->cpu_data()[i] ==
+             bottom[2]->cpu_data()[i]) ? 1 : 0;
+
+    if (i == 0) {
+    }
+  }
+  return label;
+}
+
+template <typename Dtype>
 void AccuracyLayer<Dtype>::LayerSetUp(
   const vector<Blob<Dtype>*>& bottom, const vector<Blob<Dtype>*>& top) {
   top_k_ = this->layer_param_.accuracy_param().top_k();
@@ -34,12 +51,13 @@ void AccuracyLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
     const vector<Blob<Dtype>*>& top) {
   Dtype accuracy = 0;
   const Dtype* bottom_data = bottom[0]->cpu_data();
-  const Dtype* bottom_label = bottom[1]->cpu_data();
   int num = bottom[0]->num();
   int dim = bottom[0]->count() / bottom[0]->num();
   vector<Dtype> maxval(top_k_+1);
   vector<int> max_id(top_k_+1);
+  int label;
   for (int i = 0; i < num; ++i) {
+    label = ComputeLabel(bottom, i);
     // Top-k accuracy
     std::vector<std::pair<Dtype, int> > bottom_data_vector;
     for (int j = 0; j < dim; ++j) {
@@ -51,7 +69,7 @@ void AccuracyLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
         bottom_data_vector.end(), std::greater<std::pair<Dtype, int> >());
     // check if true label is in top k predictions
     for (int k = 0; k < top_k_; k++) {
-      if (bottom_data_vector[k].second == static_cast<int>(bottom_label[i])) {
+      if (bottom_data_vector[k].second == label) {
         ++accuracy;
         break;
       }
