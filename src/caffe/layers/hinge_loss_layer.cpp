@@ -11,18 +11,33 @@
 namespace caffe {
 
 template <typename Dtype>
+int HingeLossLayer<Dtype>::ComputeLabel(const vector<Blob<Dtype>*>& bottom, int i) {
+  int label;
+  if (bottom.size() == 2) {
+    label = static_cast<int>(bottom[1]->cpu_data()[i]);
+  } else {  // bottom.size() == 3
+    // label == 1 if bottom[1] == bottom[2] (same)
+    // label == 0 if bottom[1] != bottom[2] (not same)
+    label = (bottom[1]->cpu_data()[i] ==
+             bottom[2]->cpu_data()[i]) ? 1 : 0;
+  }
+  return label;
+}
+
+template <typename Dtype>
 void HingeLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
     const vector<Blob<Dtype>*>& top) {
   const Dtype* bottom_data = bottom[0]->cpu_data();
   Dtype* bottom_diff = bottom[0]->mutable_cpu_diff();
-  const Dtype* label = bottom[1]->cpu_data();
   int num = bottom[0]->num();
   int count = bottom[0]->count();
   int dim = count / num;
+  int label;
 
   caffe_copy(count, bottom_data, bottom_diff);
   for (int i = 0; i < num; ++i) {
-    bottom_diff[i * dim + static_cast<int>(label[i])] *= -1;
+    label = ComputeLabel(bottom, i);
+    bottom_diff[i * dim + label] *= -1;
   }
   for (int i = 0; i < num; ++i) {
     for (int j = 0; j < dim; ++j) {
@@ -52,13 +67,14 @@ void HingeLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
   }
   if (propagate_down[0]) {
     Dtype* bottom_diff = bottom[0]->mutable_cpu_diff();
-    const Dtype* label = bottom[1]->cpu_data();
     int num = bottom[0]->num();
     int count = bottom[0]->count();
     int dim = count / num;
+    int label;
 
     for (int i = 0; i < num; ++i) {
-      bottom_diff[i * dim + static_cast<int>(label[i])] *= -1;
+      label = ComputeLabel(bottom, i);
+      bottom_diff[i * dim + label] *= -1;
     }
 
     const Dtype loss_weight = top[0]->cpu_diff()[0];

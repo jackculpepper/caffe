@@ -355,6 +355,13 @@ class HingeLossLayer : public LossLayer<Dtype> {
     return LayerParameter_LayerType_HINGE_LOSS;
   }
 
+  // HingeLossLayer takes 2-3 bottom Blobs; if there are 3 the second and third
+  // are compared to compute a 0/1 label.  (Otherwise the label comes directly
+  // from the second.)
+  virtual inline int ExactNumBottomBlobs() const { return -1; }
+  virtual inline int MinBottomBlobs() const { return 2; }
+  virtual inline int MaxBottomBlobs() const { return 3; }
+
  protected:
   /// @copydoc HingeLossLayer
   virtual void Forward_cpu(const vector<Blob<Dtype>*>& bottom,
@@ -389,6 +396,9 @@ class HingeLossLayer : public LossLayer<Dtype> {
    */
   virtual void Backward_cpu(const vector<Blob<Dtype>*>& top,
       const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
+
+ private:
+  int ComputeLabel(const vector<Blob<Dtype>*>& bottom, int i);
 };
 
 /**
