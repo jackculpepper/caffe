@@ -96,8 +96,8 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   convolution_param {
-    num_output: 60
-    kernel_size: 5
+    num_output: 200
+    kernel_size: 3
     stride: 1
     weight_filler {
       type: "xavier"
@@ -127,7 +127,6 @@ layers {
     stride: 2
   }
 }
-
 
 
 layers {
@@ -161,6 +160,7 @@ layers {
 }
 
 
+
 layers {
   name: "ip1"
   type: INNER_PRODUCT
@@ -169,7 +169,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   inner_product_param {
-    num_output: 100
+    num_output: 200
     weight_filler {
       type: "xavier"
     }
@@ -182,9 +182,10 @@ layers {
   param: "ip1_b"
 }
 layers {
-  name: "relu4"
+  name: "relu5"
   type: RELU
   bottom: "ip1"
   top: "ip1"
 }
+
 
