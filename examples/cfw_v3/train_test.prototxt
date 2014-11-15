@@ -31,7 +31,6 @@ layers {
   include: { phase: TEST }
 }
 
-
 layers {
   name: "data_b"
   type: IMAGE_DATA
@@ -63,12 +62,11 @@ layers {
   include: { phase: TEST }
 }
 
-
 layers {
   type: IMPORT
   name: "a"
   import_param {
-    net: "examples/cfw_v3/cfw_shared.prototxt"
+    net: "examples/cfw_v3/shared.prototxt"
     var { name: "bottom" value: "/data_a" }
     var { name: "label" value: "/label_a" }
   }
@@ -78,67 +76,45 @@ layers {
   type: IMPORT
   name: "b"
   import_param {
-    net: "examples/cfw_v3/cfw_shared.prototxt"
+    net: "examples/cfw_v3/shared.prototxt"
     var { name: "bottom" value: "/data_b" }
     var { name: "label" value: "/label_b" }
   }
 }
 
-
 layers {
-    name: "diff"
-    type: ELTWISE
-    eltwise_param {
-      coeff: 1
-      coeff: -1
-    }
-    bottom: "a/ip1"
-    bottom: "b/ip1"
-    top: "diff"
-}
-
-layers {
-    name: "absval"
-    type: ABSVAL
-    bottom: "diff"
-    top: "absval"
-}
-
-layers {
-  name: "ip3"
-  type: INNER_PRODUCT
-  bottom: "absval"
-  top: "ip3"
-  blobs_lr: 1
-  blobs_lr: 2
-  inner_product_param {
-    num_output: 2
-    weight_filler {
-      type: "xavier"
-    }
-    bias_filler {
-      type: "constant"
-      value: 0.1
-    }
+  type: IMPORT
+  name: "a_loss"
+  import_param {
+    net: "examples/cfw_v3/kway.prototxt"
+    var { name: "feat" value: "/a/ip1" }
+    var { name: "label" value: "/label_a" }
   }
 }
 
 layers {
-  name: "siamese_hinge_loss"
-  type: HINGE_LOSS
-  bottom: "ip3"
-  bottom: "label_a"
-  bottom: "label_b"
-  top: "siamese_hinge_loss"
-  loss_weight: 0.5
+  type: IMPORT
+  name: "b_loss"
+  import_param {
+    net: "examples/cfw_v3/kway.prototxt"
+    var { name: "feat" value: "/b/ip1" }
+    var { name: "label" value: "/label_b" }
+  }
 }
 
 layers {
-  name: "siamese_accuracy"
-  type: ACCURACY
-  bottom: "ip3"
-  bottom: "label_a"
-  bottom: "label_b"
-  top: "siamese_accuracy"
+  type: IMPORT
+  name: "same_label"
+  import_param {
+    net: "examples/cfw_v3/same_label.prototxt"
+  }
+}
+
+layers {
+  type: IMPORT
+  name: "contrast"
+  import_param {
+    net: "examples/cfw_v3/contrast.prototxt"
+  }
 }
 

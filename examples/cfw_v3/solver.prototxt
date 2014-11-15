@@ -1,4 +1,4 @@
-net: "examples/cfw_v3/cfw_train_test.prototxt"
+net: "examples/cfw_v3/train_test.prototxt"
 test_iter: 44
 test_net: "examples/cfw_v3/lfw_test.prototxt"
 test_iter: 91
