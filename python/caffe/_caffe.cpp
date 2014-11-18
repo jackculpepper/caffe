@@ -24,6 +24,8 @@
 
 namespace caffe {
 
+bool PyNet::glogInitialized_;
+
 // for convenience, check that input files can be opened, and raise an
 // exception that boost will send to Python if not (caffe could still crash
 // later if the input files are disturbed before they are actually used, but
@@ -174,7 +176,11 @@ BOOST_PYTHON_MODULE(_caffe) {
       .add_property("raw_scale",    &PyNet::raw_scale_)
       .add_property("channel_swap", &PyNet::channel_swap_)
       .def("_set_input_arrays",     &PyNet::set_input_arrays)
-      .def("save",                  &PyNet::save);
+      .def("save",                  &PyNet::save)
+      .def("load_imports",          &PyNet::LoadParamWithImports)
+      .staticmethod("load_imports")
+      .def("init_glog",             &PyNet::InitGlog)
+      .staticmethod("init_glog");
 
   bp::class_<PyBlob<float>, PyBlobWrap>(
       "Blob", bp::no_init)
