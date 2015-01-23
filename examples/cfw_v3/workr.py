@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import os, sys, glob, shutil, socket
+import subprocess
 
-sys.path.append('/home-2/jculpepper/caffe/python')
-sys.path.append('/home-2/jculpepper/vision-hype')
+sys.path.append('/nfs/jack/github/caffe/python')
 import caffe
 
 from caffe.proto import caffe_pb2
@@ -126,39 +126,70 @@ class FaceWorkr(GPUWorkr):
         if changes != 19:
             raise
 
-        _, net_file = mkstemp()
-        _, ts2_file = mkstemp()
+        os.makedirs(log)
+
+        net_file = os.path.join(log, 'train_test.prototxt')
+        ts2_file = os.path.join(log, 'test_lfw.prototxt')
+        solver_file = os.path.join(log, 'solver.prototxt')
+
         text_format.PrintMessage(net, open(net_file, 'w'))
         text_format.PrintMessage(test2, open(ts2_file, 'w'))
         solver.net = net_file
         solver.test_net[0] = ts2_file
         
-        _, solver_file = mkstemp()
         text_format.PrintMessage(solver, open(solver_file, 'w'))
 
-        cmd = ""
-        cmd += "GLOG_logtostderr=0 GLOG_log_dir=%s/" % log
-        cmd += " ./build/tools/caffe train "
-        cmd += " --solver=%s" % solver_file
-        cmd += " --gpu=%s" % self.device
+#        cmd = ""
+#        cmd += "GLOG_logtostderr=0 GLOG_log_dir=%s/" % log
+#        cmd += " ./build/tools/caffe train "
+#        cmd += " --solver=%s" % solver_file
+#        cmd += " --gpu=%s" % self.device
 
-        print "cmd", cmd
+
+        log_stdout_file = os.path.join(log, 'subprocess.stdout')
+        log_stderr_file = os.path.join(log, 'subprocess.stderr')
+
+        log_stdout = open(log_stdout_file, 'w')
+        log_stderr = open(log_stderr_file, 'w')
+
+        caffe_env = os.environ.copy()
+
+#        caffe_env['GLOG_logtostderr'] = '0'
+#        caffe_env['GLOG_log_dir'] = '%s/' % log
+
         print "folder", self.folder
         print "log", log
-        os.makedirs(log)
-        os.system(cmd)
 
-        #import IPython ; IPython.embed()
+        cmd = [ './build/tools/caffe',
+                'train',
+                '--solver=%s' % solver_file,
+                '--gpu=%s' % self.device ]
 
-#        solver = caffe.SGDSolver(solver_file)
-#        solver.net.set_mode_gpu()
-#        solver.solve()
+        print "cmd", " ".join(cmd)
 
-        score = 0
+        ret = subprocess.call(cmd,
+                              stderr=log_stderr,
+                              stdout=log_stdout,
+                              env=caffe_env)
 
-        with open("%s/caffe.INFO" % log) as fh:
-            score = parse_score(fh)
-        return 1 - score
+        log_stdout.close()
+        log_stderr.close()
+
+
+        #ret = os.system(cmd)
+
+        if ret == 0:
+
+            score = 0
+
+            try:
+                with open("%s/caffe.INFO" % log) as fh:
+                    score = parse_score(fh)
+                return 1 - score
+            except:
+                return -1
+        else:
+            return -1
 
 if __name__ == '__main__':
     main()
