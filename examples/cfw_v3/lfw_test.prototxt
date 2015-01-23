@@ -7,10 +7,12 @@ layers {
   top: "label_a"
   image_data_param {
     source: "data/lfw/lfw_tst_a.txt"
-    mean_file: "data/cfw/mean.binaryproto"
     batch_size: 64
-    scale: 0.00390625
     shuffle: false
+  }
+  transform_param {
+    mean_file: "data/cfw/mean.binaryproto"
+    scale: 0.00390625
   }
 }
 
@@ -21,10 +23,12 @@ layers {
   top: "label_b"
   image_data_param {
     source: "data/lfw/lfw_tst_b.txt"
-    mean_file: "data/cfw/mean.binaryproto"
     batch_size: 64
-    scale: 0.00390625
     shuffle: false
+  }
+  transform_param {
+    mean_file: "data/cfw/mean.binaryproto"
+    scale: 0.00390625
   }
 }
 

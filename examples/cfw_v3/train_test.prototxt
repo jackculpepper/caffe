@@ -7,10 +7,12 @@ layers {
   top: "label_a"
   image_data_param {
     source: "data/cfw/cfw_train_siamese_a.txt"
-    mean_file: "data/cfw/mean.binaryproto"
     batch_size: 64
-    scale: 0.00390625
     shuffle: false
+  }
+  transform_param {
+    mean_file: "data/cfw/mean.binaryproto"
+    scale: 0.00390625
     mirror: true
   }
   include: { phase: TRAIN }
@@ -23,10 +25,12 @@ layers {
   top: "label_a"
   image_data_param {
     source: "data/cfw/cfw_test_a.txt"
-    mean_file: "data/cfw/mean.binaryproto"
     batch_size: 64
-    scale: 0.00390625
     shuffle: false
+  }
+  transform_param {
+    mean_file: "data/cfw/mean.binaryproto"
+    scale: 0.00390625
   }
   include: { phase: TEST }
 }
@@ -38,10 +42,12 @@ layers {
   top: "label_b"
   image_data_param {
     source: "data/cfw/cfw_train_siamese_b.txt"
-    mean_file: "data/cfw/mean.binaryproto"
     batch_size: 64
-    scale: 0.00390625
     shuffle: false
+  }
+  transform_param {
+    mean_file: "data/cfw/mean.binaryproto"
+    scale: 0.00390625
     mirror: true
   }
   include: { phase: TRAIN }
@@ -54,10 +60,12 @@ layers {
   top: "label_b"
   image_data_param {
     source: "data/cfw/cfw_test_b.txt"
-    mean_file: "data/cfw/mean.binaryproto"
     batch_size: 64
-    scale: 0.00390625
     shuffle: false
+  }
+  transform_param {
+    mean_file: "data/cfw/mean.binaryproto"
+    scale: 0.00390625
   }
   include: { phase: TEST }
 }
