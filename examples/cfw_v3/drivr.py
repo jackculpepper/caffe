@@ -2,9 +2,9 @@
 
 import os, sys
 
-sys.path.append('/home-2/jculpepper/spearmint/spearmint/spearmint')
-sys.path.append('/home-2/jculpepper/spearmint/spearmint')
-sys.path.append('/home-2/jculpepper/vision-hype')
+sys.path.append('/nfs/jack/github/spearmint/spearmint/spearmint')
+sys.path.append('/nfs/jack/github/spearmint/spearmint')
+sys.path.append('/nfs/jack/github/caffe/python')
 from chooser.GPEIOptChooser import GPEIOptChooser
 from hype import Drivr
 
