@@ -1,9 +1,6 @@
 import os, numpy, redis, pickle, time
 from cStringIO import StringIO
 
-# Run experiment in separate process to handle crashes
-from multiprocessing import Process, Queue
-
 class Shared:
     def __init__(self, parent_folder, experiment):
         fdr = parent_folder if parent_folder  else '.'
@@ -15,12 +12,8 @@ class Shared:
         self.running = exp + '-running'
         self.results = exp + '-results'
 
-#         self.redis_server = 'deeplearn105.flickr.bf1.yahoo.com'
-        # /raid/cfw
-        # /raid/lfw
-
-        self.redis_server = 'psglogin'
-        # /data/shared/jculpepper
+        self.redis_server = 'localhost'
+        self.redis_server = 'deeplearn101.flickr.bf1.yahoo.com'
 
 class Workr(Shared):
     def loop(self):
@@ -28,9 +21,11 @@ class Workr(Shared):
         print 'Ready'
         while True:
             # Wait for a job, and move it to running queue
-            m = r.brpoplpush(self.pending, self.running, timeout=1)
+            m = r.brpoplpush(self.pending, self.running, timeout=5)
 
             if m == None:
+                print 'Triggering driver to generate an experiment'
+
                 # Trigger drivr to generate new experiment
                 r.setex(self.waiting, '', 2)
             else:
@@ -53,19 +48,6 @@ class GPUWorkr(Workr):
     def run(self, job, **params):
         return self.gpu_run(job, **params);
 
-        q = Queue()
-        p = Process(target=self.fork, args=(q, job), kwargs=params)
-        p.start()
-        p.join()
-        if p.exitcode == 0:
-            return q.get()
-        else:
-            return -1
-
-    def fork(self, queue, job, **params):
-        value = self.gpu_run(job, **params);
-        queue.put(value)
-
 class Drivr(Shared):
     def __init__(self, chooser, parent_folder=None, experiment=None, grid_size=20000, grid_seed=1):
         Shared.__init__(self, parent_folder, experiment)
@@ -79,8 +61,8 @@ class Drivr(Shared):
         expt = load_experiment('config.pb')
 
         # Remove lock file, not used and can et stuck when python is killed
+        print 'Removing lock file..'
         safe_delete('%s.lock' % EXPERIMENT_GRID_FILE)
-        print "hi"
         self.grid = ExperimentGrid(self.folder, expt.variable, grid_size, grid_seed)
 
     def loop(self):
@@ -98,8 +80,10 @@ class Drivr(Shared):
             while True:
                 result = r.rpop(self.results)
                 if result is None:
+                    print 'Received result None'
                     break
                 (job_id, value, duration) = pickle.loads(result)
+                print 'Received result', value
                 if value != -1:
                     self.job_complete(job_id, value, duration)
                 else:
