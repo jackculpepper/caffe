@@ -9,7 +9,6 @@ import caffe
 from caffe.proto import caffe_pb2
 from google.protobuf import text_format
 from hype import GPUWorkr
-from tempfile import mkstemp
 
 
 def parse_score(f, debug=False):
@@ -72,7 +71,9 @@ class FaceWorkr(GPUWorkr):
         solver = caffe_pb2.SolverParameter()
         net = caffe_pb2.NetParameter()
         test2 = caffe_pb2.NetParameter()
-        text_format.Merge(open('examples/cfw_v3/solver.prototxt').read(), solver)
+        with open('examples/cfw_v3/solver.prototxt') as fh:
+            text_format.Merge(fh.read(), solver)
+
         text_format.Merge(caffe.Net.load_imports('examples/cfw_v3/train_test.prototxt'), net)
         text_format.Merge(caffe.Net.load_imports('examples/cfw_v3/lfw_test.prototxt'), test2)
 
@@ -132,12 +133,15 @@ class FaceWorkr(GPUWorkr):
         ts2_file = os.path.join(log, 'test_lfw.prototxt')
         solver_file = os.path.join(log, 'solver.prototxt')
 
-        text_format.PrintMessage(net, open(net_file, 'w'))
-        text_format.PrintMessage(test2, open(ts2_file, 'w'))
+        with open(net_file, 'w') as fh:
+            text_format.PrintMessage(net, fh)
+        with open(ts2_file, 'w') as fh:
+            text_format.PrintMessage(test2, fh)
         solver.net = net_file
         solver.test_net[0] = ts2_file
         
-        text_format.PrintMessage(solver, open(solver_file, 'w'))
+        with open(solver_file, 'w') as fh:
+            text_format.PrintMessage(solver, fh)
 
 #        cmd = ""
 #        cmd += "GLOG_logtostderr=0 GLOG_log_dir=%s/" % log
@@ -157,7 +161,7 @@ class FaceWorkr(GPUWorkr):
 #        caffe_env['GLOG_logtostderr'] = '0'
 #        caffe_env['GLOG_log_dir'] = '%s/' % log
 
-        print "folder", self.folder
+#        print "folder", self.folder
         print "log", log
 
         cmd = [ './build/tools/caffe',
