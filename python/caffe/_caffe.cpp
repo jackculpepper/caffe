@@ -99,14 +99,28 @@ void Net_Save(const Net<Dtype>& net, string filename) {
   WriteProtoToBinaryFile(net_param, filename.c_str());
 }
 
-void Net_SetInputArrays(Net<Dtype>* net, bp::object data_obj,
+void Net_SetInputArrays(Net<Dtype>* net, string layername, bp::object data_obj,
     bp::object labels_obj) {
   // check that this network has an input MemoryDataLayer
+/*
   shared_ptr<MemoryDataLayer<Dtype> > md_layer =
     boost::dynamic_pointer_cast<MemoryDataLayer<Dtype> >(net->layers()[0]);
   if (!md_layer) {
     throw std::runtime_error("set_input_arrays may only be called if the"
         " first layer is a MemoryDataLayer");
+  }
+*/
+
+  // check that this network (1) has a layer by the name given, and (2) the
+  // named layer is a MemoryDataLayer
+  if ( ! net->has_layer(layername) ) {
+    throw std::runtime_error("set_input_arrays must be passed a valid layer name");
+  }
+  shared_ptr<MemoryDataLayer<Dtype> > md_layer =
+    boost::dynamic_pointer_cast<MemoryDataLayer<Dtype> >(net->layer_by_name(layername));
+  if (!md_layer) {
+    throw std::runtime_error("set_input_arrays may only be called if the"
+        " named layer is a MemoryDataLayer");
   }
 
   // check that we were passed appropriately-sized contiguous memory
