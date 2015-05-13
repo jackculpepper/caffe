@@ -4,7 +4,7 @@ test_net: "models/celeb_python_siamese_v0/lfw_test_siamese.prototxt"
 test_iter: 1
 test_interval: 1000
 # lr for fine-tuning should be lower than when starting from scratch
-base_lr: 0.01
+base_lr: 0.001
 lr_policy: "step"
 gamma: 0.1
 # stepsize should also be lower, as we're closer to being done
