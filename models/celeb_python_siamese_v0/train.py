@@ -9,6 +9,7 @@ import sys
 import os
 
 from os.path import join
+from collections import defaultdict
 
 np.random.seed(0)
 
@@ -23,6 +24,9 @@ parser.add_argument('-d', '--device_id', type=int, help='''gpu device number''',
 model_root = 'models/celeb_python_siamese_v0'
 
 mean_file = join(model_root, 'celeb_mean.npy')
+
+trn_src_file = join(model_root, 'clusters_2_seed=0_trn.txt.shuf' % tt, 'r')
+
 
 trn_file = join(model_root, 'clusters_2_seed=0_trn_siamese.txt')
 trn_b_file = join(model_root, 'clusters_2_seed=0_trn_siamese_b.txt')
@@ -39,11 +43,83 @@ lfw_b_file = join(model_root, 'lfw_b.txt')
 solver_file = join(model_root, 'solver.prototxt')
 #model_file = join(model_root, 'celeb_v0_iter_80000.caffemodel')
 model_file = join(model_root, 'celeb_v1_iter_280000.caffemodel')
+#model_file = join(model_root, 'celeb_v0_iter_10000.caffemodel')
 
 lines_cache = {}
 images_cache = {}
 images_cache_hits = 0
 
+
+label_to_images_trn = None
+label_to_images_tst = None
+
+
+def generate_pairs(labels, label_to_images):
+
+    # same pairs
+    same_pairs = list()
+
+    num_same_pairs = 0
+
+    # generate same pairs
+    for label in labels:
+        same_pairs_for_label = list()
+
+        paths = label_to_images[label]
+        k = 0
+        for i in range(len(paths)):
+            for j in range(i+1, len(paths)):
+                if k % 2 == 0:
+                    tup = (i, j)
+                else:
+                    tup = (j, i)
+
+                tup = (label, label) + tup
+                same_pairs_for_label.append(tup)
+                k += 1
+
+        # shuffle and truncate
+        random.shuffle(same_pairs_for_label)
+        same_pairs_for_label = same_pairs_for_label[:max_same_per_label]
+
+        num_same_pairs += len(same_pairs_for_label)
+        same_pairs.extend(same_pairs_for_label)
+
+    # not same pairs
+    not_same_pairs = set()
+
+    while len(not_same_pairs) < num_same_pairs:
+        # pick labels
+        label_a = label_b = 0
+        while label_a == label_b:
+            label_a = random.randint(0, len(labels) - 1)
+            label_b = random.randint(0, len(labels) - 1)
+
+        # pick images
+        image_a = random.randint(0, len(label_to_images[label_a]) - 1)
+        image_b = random.randint(0, len(label_to_images[label_b]) - 1)
+
+        tup = (label_a, label_b, image_a, image_b)
+        not_same_pairs.add(tup)
+
+
+
+
+
+
+def build_label_map(data_file):
+    label_to_images = defaultdict(list)
+
+    with open(data_file, 'r') as fh:
+        for line in fh:
+            path, label = line.split()
+            label = int(label)
+            label_to_images[label].append(path)
+
+    labels = label_to_images.keys()
+    labels.sort()
+
+    return label_to_images, labels
 
 
 def load_classifier():
@@ -55,8 +131,8 @@ def load_classifier():
     return net
 
 
-def compute_mean_image(data_path, num_images=100000):
-    lines = load_lines(data_path)
+def compute_mean_image(data_file, num_images=100000):
+    lines = load_lines(data_file)
     sum = None
     den = 0
 
@@ -124,23 +200,23 @@ def load_image(img_path):
 
 
 
-def load_lines(data_path):
-    if not lines_cache.has_key(data_path):
+def load_lines(data_file):
+    if not lines_cache.has_key(data_file):
         lines = list()
-        with open(data_path, 'r') as fh:
+        with open(data_file, 'r') as fh:
             lines = fh.readlines()
             lines = [ l.strip() for l in lines ]
-        lines_cache[data_path] = lines
+        lines_cache[data_file] = lines
     else:
-        lines = lines_cache[data_path]
+        lines = lines_cache[data_file]
 
     return lines
 
-def load_batch(data_path, mean_trn_img,
-               batch_num=-1, batch_size=50, transpose=(2,0,1)):
+def load_batch(data_file, mean_trn_img,
+               batch_num, batch_size=50, transpose=(2,0,1), verbose=False):
     t0 = time()
 
-    lines = load_lines(data_path)
+    lines = load_lines(data_file)
     global images_cache_hits
     images_cache_hits = 0
 
@@ -164,8 +240,9 @@ def load_batch(data_path, mean_trn_img,
         data[i, :, :, :] = input_image_t - mean_trn_img
         labels[i, 0, 0, 0] = label
 
-    print 'loaded batch in %.3f s' % ( time() - t0 )
-    print '%d cache hits' % images_cache_hits
+    if verbose:
+        print 'loaded batch in %.3f s' % ( time() - t0 ),
+        print '%d cache hits' % images_cache_hits
 
     return data, labels
 
@@ -185,23 +262,25 @@ def load_lfw_b_batch(batch_num, batch_size, mean_trn_img):
     return load_batch(lfw_b_file, mean_trn_img,
                       batch_num, batch_size=batch_size)
 
-def load_trn_batch(batch_size, mean_trn_img):
-    return load_batch(trn_file, mean_trn_img, batch_size=batch_size)
+def load_trn_batch(batch_num, batch_size, mean_trn_img):
+    return load_batch(trn_file, mean_trn_img,
+                      batch_num, batch_size=batch_size)
 
-def load_trn_b_batch(batch_size, mean_trn_img):
-    return load_batch(trn_b_file, mean_trn_img, batch_size=batch_size)
+def load_trn_b_batch(batch_num, batch_size, mean_trn_img):
+    return load_batch(trn_b_file, mean_trn_img,
+                      batch_num, batch_size=batch_size)
 
 
-def warm(data_path):
-    lines = load_lines(data_path)
+def warm(data_file):
+    lines = load_lines(data_file)
     for i, l in enumerate(lines):
         image_path, label = l.split()
         print 'warming %d / %d : %s' % (i+1, len(lines), image_path)
         input_image = load_image(image_path)
 
 
-def compute_mean_image(data_path, num_images=100000, transpose=(2,0,1)):
-    lines = load_lines(data_path)
+def compute_mean_image(data_file, num_images=100000, transpose=(2,0,1)):
+    lines = load_lines(data_file)
     sum = None
     den = 0
 
@@ -229,50 +308,10 @@ def display_data():
 
 
 
-def test_sgd(solver):
-
-    batch_size = 50
-
-    data_trn, labels_trn = load_trn_batch(batch_size)
-    solver.net.set_input_arrays('data', data_trn, labels_trn)
-
-    data_trn_b, labels_trn_b = load_trn_b_batch(batch_size)
-    solver.net.set_input_arrays('data_b', data_trn_b, labels_trn_b)
-
-    data_tst, labels_tst = load_tst_batch(0, batch_size)
-    solver.test_nets[0].set_input_arrays('data', data_tst, labels_tst)
-
-    data_tst_b, labels_tst_b = load_tst_b_batch(0, batch_size)
-    solver.test_nets[0].set_input_arrays('data_b', data_tst_b, labels_tst_b)
 
 
-    solver.net.forward()  # train net
-    solver.test_nets[0].forward()  # test net (there can be more than one)
-
-    import IPython ; IPython.embed()
-
-
-    solver.step(1)
-
-
-
-
-def sgd(solver, mean_trn_img, batch_size):
-
-    niter = 280000
-    test_interval = 25
-    # losses will also be stored in the log
-    train_loss = np.zeros(niter)
-    tst_acc = np.zeros(int(np.ceil(niter / test_interval)))
-    lfw_acc = np.zeros(int(np.ceil(niter / test_interval)))
-    output = np.zeros((niter, 8, 10))
-
-    num_test_batches = 20
-    num_test_batches = 100
-
-    #import IPython ; IPython.embed()
-
-    # prime test network data layers
+def test_sgd(solver, mean_trn_img, batch_size, niter=10, num_test_batches=10):
+    # connect test network memory data layers to python managed buffers
     data_tst, labels_tst = load_tst_batch(0, batch_size, mean_trn_img)
     solver.test_nets[1].set_input_arrays('data', data_tst, labels_tst)
 
@@ -286,12 +325,145 @@ def sgd(solver, mean_trn_img, batch_size):
     solver.test_nets[0].set_input_arrays('data_b', data_lfw_b, labels_lfw_b)
 
 
+
+    trn_kway_acc = np.zeros(int(np.ceil(niter)))
+    trn_pair_acc = np.zeros(int(np.ceil(niter)))
+    tst_kway_acc = np.zeros(int(np.ceil(niter)))
+    tst_pair_acc = np.zeros(int(np.ceil(niter)))
+    lfw_pair_acc = np.zeros(int(np.ceil(niter)))
+
+
+    num_trn_batches = len(load_lines(trn_file)) / batch_size
+
+
+    for it in range(niter):
+
+        for i in range(num_test_batches):
+            batch_num = np.random.randint(num_trn_batches)
+
+            data_trn, labels_trn = load_trn_batch(batch_num, batch_size, mean_trn_img)
+            solver.net.set_input_arrays('data', data_trn, labels_trn)
+
+            data_trn_b, labels_trn_b = load_trn_b_batch(batch_num, batch_size, mean_trn_img)
+            solver.net.set_input_arrays('data_b', data_trn_b, labels_trn_b)
+
+            solver.step(1)
+
+        # trn kway and pair classification
+        kway_correct = 0.0
+        pair_correct = 0.0
+        for i in range(num_test_batches):
+
+            data_trn, labels_trn = load_trn_batch(i, batch_size, mean_trn_img)
+            solver.net.set_input_arrays('data', data_trn, labels_trn)
+
+            data_trn_b, labels_trn_b = load_trn_b_batch(i, batch_size, mean_trn_img)
+            solver.net.set_input_arrays('data_b', data_trn_b, labels_trn_b)
+
+            solver.net.forward()
+
+            kway_correct += (solver.net.blobs['fc7'].data.argmax(1)
+                          == solver.net.blobs['label'].data).sum()
+            pair_correct += (solver.net.blobs['ip3'].data.argmax(1)
+                          == solver.net.blobs['same_label'].data.squeeze()).sum()
+
+        trn_kway_acc[it] = kway_correct / (batch_size * num_test_batches)
+        trn_pair_acc[it] = pair_correct / (batch_size * num_test_batches)
+
+        # tst kway and pair classification
+        kway_correct = 0.0
+        pair_correct = 0.0
+        for i in range(num_test_batches):
+
+            data_tst, labels_tst = load_tst_batch(i, batch_size, mean_trn_img)
+            solver.test_nets[1].set_input_arrays('data', data_tst, labels_tst)
+
+            data_tst_b, labels_tst_b = load_tst_b_batch(i, batch_size, mean_trn_img)
+            solver.test_nets[1].set_input_arrays('data_b', data_tst_b, labels_tst_b)
+
+            solver.test_nets[1].forward()
+
+
+            kway_correct += (solver.test_nets[1].blobs['fc7'].data.argmax(1)
+                          == solver.test_nets[1].blobs['label'].data).sum()
+            pair_correct += (solver.test_nets[1].blobs['ip3'].data.argmax(1)
+                          == solver.test_nets[1].blobs['same_label'].data.squeeze()).sum()
+
+        tst_kway_acc[it] = kway_correct / (batch_size * num_test_batches)
+        tst_pair_acc[it] = pair_correct / (batch_size * num_test_batches)
+
+
+        # lfw classification
+        pair_correct = 0.0
+        for i in range(num_test_batches):
+
+            data_lfw, labels_lfw = load_lfw_batch(i, batch_size, mean_trn_img)
+            solver.test_nets[0].set_input_arrays('data', data_lfw, labels_lfw)
+
+            data_lfw_b, labels_lfw_b = load_lfw_b_batch(i, batch_size, mean_trn_img)
+            solver.test_nets[0].set_input_arrays('data_b', data_lfw_b, labels_lfw_b)
+
+            solver.test_nets[0].forward()
+
+            pair_correct += (solver.test_nets[0].blobs['ip3'].data.argmax(1)
+                           == solver.test_nets[0].blobs['same_label'].data.squeeze()).sum()
+
+
+        lfw_pair_acc[it] = pair_correct / (batch_size * num_test_batches)
+
+        print 'trn_kway_acc', trn_kway_acc[it]
+        print 'trn_pair_acc', trn_pair_acc[it]
+        print 'tst_kway_acc', tst_kway_acc[it]
+        print 'tst_pair_acc', tst_pair_acc[it]
+        print 'lfw_pair_acc', lfw_pair_acc[it]
+
+
+
+
+
+def sgd(solver, mean_trn_img, batch_size):
+
+    niter = 280000
+    test_interval = 1000
+    # losses will also be stored in the log
+    train_loss = np.zeros(niter)
+    trn_kway_acc = np.zeros(int(np.ceil(niter / test_interval)))
+    trn_pair_acc = np.zeros(int(np.ceil(niter / test_interval)))
+    tst_kway_acc = np.zeros(int(np.ceil(niter / test_interval)))
+    tst_pair_acc = np.zeros(int(np.ceil(niter / test_interval)))
+    lfw_pair_acc = np.zeros(int(np.ceil(niter / test_interval)))
+    output = np.zeros((niter, 8, 10))
+
+    num_test_batches = 20
+    num_test_batches = 118
+
+    #import IPython ; IPython.embed()
+
+
+    # connect test network memory data layers to python managed buffers
+    data_tst, labels_tst = load_tst_batch(0, batch_size, mean_trn_img)
+    solver.test_nets[1].set_input_arrays('data', data_tst, labels_tst)
+
+    data_tst_b, labels_tst_b = load_tst_b_batch(0, batch_size, mean_trn_img)
+    solver.test_nets[1].set_input_arrays('data_b', data_tst_b, labels_tst_b)
+
+    data_lfw, labels_lfw = load_lfw_batch(0, batch_size, mean_trn_img)
+    solver.test_nets[0].set_input_arrays('data', data_lfw, labels_lfw)
+
+    data_lfw_b, labels_lfw_b = load_lfw_b_batch(0, batch_size, mean_trn_img)
+    solver.test_nets[0].set_input_arrays('data_b', data_lfw_b, labels_lfw_b)
+
+
+
+
     # the main solver loop
     for it in range(niter):
 
-        data_trn, labels_trn = load_trn_batch(batch_size, mean_trn_img)
+        batch_num = np.random.randint(num_test_batches)
+
+        data_trn, labels_trn = load_trn_batch(batch_num, batch_size, mean_trn_img)
         solver.net.set_input_arrays('data', data_trn, labels_trn)
-        data_trn_b, labels_trn_b = load_trn_b_batch(batch_size, mean_trn_img)
+        data_trn_b, labels_trn_b = load_trn_b_batch(batch_num, batch_size, mean_trn_img)
         solver.net.set_input_arrays('data_b', data_trn_b, labels_trn_b)
 
         solver.step(1)  # SGD by Caffe
@@ -309,51 +481,76 @@ def sgd(solver, mean_trn_img, batch_size):
             print 'Iteration', it, 'testing...'
             test_it = it // test_interval
 
-            # k-way classification
-            correct = 0.0
-            for test_it in range(num_test_batches):
+            # trn kway and pair classification
+            kway_correct = 0.0
+            pair_correct = 0.0
+            for i in range(num_test_batches):
 
-                data_tst, labels_tst = load_tst_batch(test_it, batch_size,
-                                                      mean_trn_img)
-                solver.test_nets[1].set_input_arrays('data',
-                                                     data_tst, labels_tst)
+                data_trn, labels_trn = load_trn_batch(i, batch_size, mean_trn_img)
+                solver.net.set_input_arrays('data', data_trn, labels_trn)
 
-                data_tst_b, labels_tst_b = load_tst_batch(test_it, batch_size,
-                                                          mean_trn_img)
-                solver.test_nets[1].set_input_arrays('data_b',
-                                                     data_tst_b, labels_tst_b)
+                data_trn_b, labels_trn_b = load_trn_b_batch(i, batch_size, mean_trn_img)
+                solver.net.set_input_arrays('data_b', data_trn_b, labels_trn_b)
+
+                solver.net.forward()
+
+                kway_correct += (solver.net.blobs['fc7'].data.argmax(1)
+                              == solver.net.blobs['label'].data).sum()
+                pair_correct += (solver.net.blobs['ip3'].data.argmax(1)
+                              == solver.net.blobs['same_label'].data.squeeze()).sum()
+
+            trn_kway_acc[test_it] = kway_correct / (batch_size * num_test_batches)
+            trn_pair_acc[test_it] = pair_correct / (batch_size * num_test_batches)
+
+
+            # tst kway and pair classification
+            kway_correct = 0.0
+            pair_correct = 0.0
+            for i in range(num_test_batches):
+
+                data_tst, labels_tst = load_tst_batch(i, batch_size, mean_trn_img)
+                solver.test_nets[1].set_input_arrays('data', data_tst, labels_tst)
+
+                data_tst_b, labels_tst_b = load_tst_b_batch(i, batch_size, mean_trn_img)
+                solver.test_nets[1].set_input_arrays('data_b', data_tst_b, labels_tst_b)
 
                 solver.test_nets[1].forward()
 
 
-                correct += (solver.test_nets[1].blobs['fc7'].data.argmax(1)
-                               == solver.test_nets[1].blobs['label'].data).sum()
+                kway_correct += (solver.test_nets[1].blobs['fc7'].data.argmax(1)
+                              == solver.test_nets[1].blobs['label'].data).sum()
+                pair_correct += (solver.test_nets[1].blobs['ip3'].data.argmax(1)
+                              == solver.test_nets[1].blobs['same_label'].data.squeeze()).sum()
 
-            tst_acc[test_it] = correct / (batch_size * num_test_batches)
-            print 'tst_acc', tst_acc[test_it]
+            tst_kway_acc[test_it] = kway_correct / (batch_size * num_test_batches)
+            tst_pair_acc[test_it] = pair_correct / (batch_size * num_test_batches)
 
 
             # lfw classification
-            correct = 0.0
-            for test_it in range(num_test_batches):
+            pair_correct = 0.0
+            for i in range(num_test_batches):
 
-                data_lfw, labels_lfw = load_lfw_batch(test_it, batch_size,
-                                                      mean_trn_img)
+                data_lfw, labels_lfw = load_lfw_batch(i, batch_size, mean_trn_img)
                 solver.test_nets[0].set_input_arrays('data', data_lfw, labels_lfw)
 
-                data_lfw_b, labels_lfw_b = load_lfw_b_batch(test_it, batch_size,
-                                                            mean_trn_img)
+                data_lfw_b, labels_lfw_b = load_lfw_b_batch(i, batch_size, mean_trn_img)
                 solver.test_nets[0].set_input_arrays('data_b', data_lfw_b, labels_lfw_b)
 
                 solver.test_nets[0].forward()
 
-                correct += (solver.test_nets[0].blobs['ip3'].data.argmax(1)
-                               == solver.test_nets[1].blobs['same_label'].data).sum()
+                pair_correct += (solver.test_nets[0].blobs['ip3'].data.argmax(1)
+                               == solver.test_nets[0].blobs['same_label'].data.squeeze()).sum()
 
                 #import IPython ; IPython.embed()
 
-            lfw_acc[test_it] = correct / (batch_size * num_test_batches)
-            print 'lfw_acc', lfw_acc[test_it]
+            lfw_pair_acc[test_it] = pair_correct / (batch_size * num_test_batches)
+
+
+            print 'trn_kway_acc', trn_kway_acc[test_it]
+            print 'trn_pair_acc', trn_pair_acc[test_it]
+            print 'tst_kway_acc', tst_kway_acc[test_it]
+            print 'tst_pair_acc', tst_pair_acc[test_it]
+            print 'lfw_pair_acc', lfw_pair_acc[test_it]
 
 
 def main(args):
@@ -390,6 +587,12 @@ def main(args):
     
     if False:
         warm(trn_file)
+
+
+    # prime test network data layers
+
+    #test_sgd(solver, mean_trn_img, batch_size, niter=10, num_test_batches=10)
+    #import IPython ; IPython.embed()
 
     sgd(solver, mean_trn_img, batch_size)
 

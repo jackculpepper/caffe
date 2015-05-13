@@ -237,12 +237,12 @@ layer {
   bottom: "pool5_XXX"
   top: "fc6_XXX"
   param {
-    lr_mult: 10
+    lr_mult: 1
     decay_mult: 1
     name: "fc6_w"
   }
   param {
-    lr_mult: 20
+    lr_mult: 2
     decay_mult: 0
     name: "fc6_b"
   }
