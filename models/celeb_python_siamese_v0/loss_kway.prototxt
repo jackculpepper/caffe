@@ -5,12 +5,12 @@ layer {
   bottom: "fc6_XXX"
   top: "fc7_XXX"
   param {
-    lr_mult: 10
+    lr_mult: 1
     decay_mult: 1
     name: "fc7_w"
   }
   param {
-    lr_mult: 20
+    lr_mult: 2
     decay_mult: 0
     name: "fc7_b"
   }

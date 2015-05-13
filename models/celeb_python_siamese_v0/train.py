@@ -25,7 +25,10 @@ model_root = 'models/celeb_python_siamese_v0'
 
 mean_file = join(model_root, 'celeb_mean.npy')
 
-trn_src_file = join(model_root, 'clusters_2_seed=0_trn.txt.shuf' % tt, 'r')
+
+
+trn_src_file = join(model_root, 'clusters_2_seed=0_trn.txt.shuf')
+tst_src_file = join(model_root, 'clusters_2_seed=0_tst.txt.shuf')
 
 
 trn_file = join(model_root, 'clusters_2_seed=0_trn_siamese.txt')
@@ -50,58 +53,54 @@ images_cache = {}
 images_cache_hits = 0
 
 
-label_to_images_trn = None
-label_to_images_tst = None
 
 
-def generate_pairs(labels, label_to_images):
+
+
+
+def generate_same_pairs(label, paths):
 
     # same pairs
     same_pairs = list()
 
-    num_same_pairs = 0
+    k = 0
+    for i in range(len(paths)):
+        for j in range(i+1, len(paths)):
+            if k % 2 == 0:
+                tup = (paths[i], paths[j])
+            else:
+                tup = (paths[j], paths[i])
 
-    # generate same pairs
-    for label in labels:
-        same_pairs_for_label = list()
+            tup = (label, label) + tup
+            same_pairs.append(tup)
+            k += 1
 
-        paths = label_to_images[label]
-        k = 0
-        for i in range(len(paths)):
-            for j in range(i+1, len(paths)):
-                if k % 2 == 0:
-                    tup = (i, j)
-                else:
-                    tup = (j, i)
+    np.random.shuffle(same_pairs)
 
-                tup = (label, label) + tup
-                same_pairs_for_label.append(tup)
-                k += 1
+    return same_pairs
 
-        # shuffle and truncate
-        random.shuffle(same_pairs_for_label)
-        same_pairs_for_label = same_pairs_for_label[:max_same_per_label]
-
-        num_same_pairs += len(same_pairs_for_label)
-        same_pairs.extend(same_pairs_for_label)
+def generate_not_same_pairs(label_a, labels, label_to_images, num_pairs):
 
     # not same pairs
     not_same_pairs = set()
 
-    while len(not_same_pairs) < num_same_pairs:
-        # pick labels
-        label_a = label_b = 0
+    while len(not_same_pairs) < num_pairs:
+        # pick label_b
+        label_b = label_a
         while label_a == label_b:
-            label_a = random.randint(0, len(labels) - 1)
-            label_b = random.randint(0, len(labels) - 1)
+            label_b = np.random.randint(len(labels))
 
         # pick images
-        image_a = random.randint(0, len(label_to_images[label_a]) - 1)
-        image_b = random.randint(0, len(label_to_images[label_b]) - 1)
+        image_a = np.random.randint(len(label_to_images[label_a]))
+        image_b = np.random.randint(len(label_to_images[label_b]))
 
-        tup = (label_a, label_b, image_a, image_b)
+        tup = (label_a,
+               label_b,
+               label_to_images[label_a][image_a],
+               label_to_images[label_b][image_b])
         not_same_pairs.add(tup)
 
+    return not_same_pairs
 
 
 
@@ -122,13 +121,43 @@ def build_label_map(data_file):
     return label_to_images, labels
 
 
-def load_classifier():
-    net = caffe.Classifier(model_prototxt, model_file,
-                           mean=np.load(mean_file),
-                           channel_swap=(2,1,0),
-                           raw_scale=255,
-                           image_dims=(227, 227))
-    return net
+def load_sampled_batch(pairs, mean_trn_img,
+                       batch_size=50, transpose=(2,0,1), verbose=False):
+    t0 = time()
+
+    assert(len(pairs) == batch_size)
+
+    global images_cache_hits
+    images_cache_hits = 0
+
+    data_a = np.zeros((batch_size, 3, 227, 227), dtype=np.float32)
+    labels_a = np.zeros((batch_size, 1, 1, 1), dtype=np.float32)
+
+    data_b = np.zeros((batch_size, 3, 227, 227), dtype=np.float32)
+    labels_b = np.zeros((batch_size, 1, 1, 1), dtype=np.float32)
+
+    for i, p in enumerate(pairs):
+        label_a, label_b, image_path_a, image_path_b = p
+
+        label_a = float(label_a)
+        input_image_a = load_image(image_path_a)
+        input_image_a_t = input_image_a.transpose(transpose)
+        data_a[i, :, :, :] = input_image_a_t - mean_trn_img
+        labels_a[i, 0, 0, 0] = label_a
+
+        label_b = float(label_b)
+        input_image_b = load_image(image_path_b)
+        input_image_b_t = input_image_b.transpose(transpose)
+        data_b[i, :, :, :] = input_image_b_t - mean_trn_img
+        labels_b[i, 0, 0, 0] = label_b
+
+    if verbose:
+        print 'loaded batch in %.3f s' % ( time() - t0 ),
+        print '%d cache hits' % images_cache_hits
+
+    return data_a, labels_a, data_b, labels_b
+
+
 
 
 def compute_mean_image(data_file, num_images=100000):
@@ -310,7 +339,7 @@ def display_data():
 
 
 
-def test_sgd(solver, mean_trn_img, batch_size, niter=10, num_test_batches=10):
+def test_sgd(solver, mean_trn_img, batch_size, niter=10, num_tst_batches=10):
     # connect test network memory data layers to python managed buffers
     data_tst, labels_tst = load_tst_batch(0, batch_size, mean_trn_img)
     solver.test_nets[1].set_input_arrays('data', data_tst, labels_tst)
@@ -338,7 +367,7 @@ def test_sgd(solver, mean_trn_img, batch_size, niter=10, num_test_batches=10):
 
     for it in range(niter):
 
-        for i in range(num_test_batches):
+        for i in range(num_tst_batches):
             batch_num = np.random.randint(num_trn_batches)
 
             data_trn, labels_trn = load_trn_batch(batch_num, batch_size, mean_trn_img)
@@ -352,7 +381,7 @@ def test_sgd(solver, mean_trn_img, batch_size, niter=10, num_test_batches=10):
         # trn kway and pair classification
         kway_correct = 0.0
         pair_correct = 0.0
-        for i in range(num_test_batches):
+        for i in range(num_tst_batches):
 
             data_trn, labels_trn = load_trn_batch(i, batch_size, mean_trn_img)
             solver.net.set_input_arrays('data', data_trn, labels_trn)
@@ -367,13 +396,13 @@ def test_sgd(solver, mean_trn_img, batch_size, niter=10, num_test_batches=10):
             pair_correct += (solver.net.blobs['ip3'].data.argmax(1)
                           == solver.net.blobs['same_label'].data.squeeze()).sum()
 
-        trn_kway_acc[it] = kway_correct / (batch_size * num_test_batches)
-        trn_pair_acc[it] = pair_correct / (batch_size * num_test_batches)
+        trn_kway_acc[it] = kway_correct / (batch_size * num_tst_batches)
+        trn_pair_acc[it] = pair_correct / (batch_size * num_tst_batches)
 
         # tst kway and pair classification
         kway_correct = 0.0
         pair_correct = 0.0
-        for i in range(num_test_batches):
+        for i in range(num_tst_batches):
 
             data_tst, labels_tst = load_tst_batch(i, batch_size, mean_trn_img)
             solver.test_nets[1].set_input_arrays('data', data_tst, labels_tst)
@@ -389,13 +418,13 @@ def test_sgd(solver, mean_trn_img, batch_size, niter=10, num_test_batches=10):
             pair_correct += (solver.test_nets[1].blobs['ip3'].data.argmax(1)
                           == solver.test_nets[1].blobs['same_label'].data.squeeze()).sum()
 
-        tst_kway_acc[it] = kway_correct / (batch_size * num_test_batches)
-        tst_pair_acc[it] = pair_correct / (batch_size * num_test_batches)
+        tst_kway_acc[it] = kway_correct / (batch_size * num_tst_batches)
+        tst_pair_acc[it] = pair_correct / (batch_size * num_tst_batches)
 
 
         # lfw classification
         pair_correct = 0.0
-        for i in range(num_test_batches):
+        for i in range(num_tst_batches):
 
             data_lfw, labels_lfw = load_lfw_batch(i, batch_size, mean_trn_img)
             solver.test_nets[0].set_input_arrays('data', data_lfw, labels_lfw)
@@ -409,7 +438,7 @@ def test_sgd(solver, mean_trn_img, batch_size, niter=10, num_test_batches=10):
                            == solver.test_nets[0].blobs['same_label'].data.squeeze()).sum()
 
 
-        lfw_pair_acc[it] = pair_correct / (batch_size * num_test_batches)
+        lfw_pair_acc[it] = pair_correct / (batch_size * num_tst_batches)
 
         print 'trn_kway_acc', trn_kway_acc[it]
         print 'trn_pair_acc', trn_pair_acc[it]
@@ -434,8 +463,10 @@ def sgd(solver, mean_trn_img, batch_size):
     lfw_pair_acc = np.zeros(int(np.ceil(niter / test_interval)))
     output = np.zeros((niter, 8, 10))
 
-    num_test_batches = 20
-    num_test_batches = 118
+    num_tst_batches = 20
+    num_tst_batches = 118
+
+    num_trn_batches = len(load_lines(trn_file)) / batch_size
 
     #import IPython ; IPython.embed()
 
@@ -454,12 +485,27 @@ def sgd(solver, mean_trn_img, batch_size):
     solver.test_nets[0].set_input_arrays('data_b', data_lfw_b, labels_lfw_b)
 
 
+    # XXX
+    if False:
+        # sample pairs
+        label_to_images_trn, labels_trn = build_label_map(trn_src_file)
+
+        for label in labels_trn:
+            same_pairs = generate_same_pairs(label, label_to_images_trn[label])
+            not_same_pairs = generate_not_same_pairs(label, labels_trn,
+                                                     label_to_images_trn, len(same_pairs))
+
+            batch_pairs = same_pairs[:batch_size]
+            data_a, labels_a, data_b, labels_b = load_sampled_batch(batch_pairs, mean_trn_img)
+
+            import IPython ; IPython.embed()
+
 
 
     # the main solver loop
     for it in range(niter):
 
-        batch_num = np.random.randint(num_test_batches)
+        batch_num = np.random.randint(num_trn_batches)
 
         data_trn, labels_trn = load_trn_batch(batch_num, batch_size, mean_trn_img)
         solver.net.set_input_arrays('data', data_trn, labels_trn)
@@ -484,7 +530,7 @@ def sgd(solver, mean_trn_img, batch_size):
             # trn kway and pair classification
             kway_correct = 0.0
             pair_correct = 0.0
-            for i in range(num_test_batches):
+            for i in range(num_tst_batches):
 
                 data_trn, labels_trn = load_trn_batch(i, batch_size, mean_trn_img)
                 solver.net.set_input_arrays('data', data_trn, labels_trn)
@@ -499,14 +545,14 @@ def sgd(solver, mean_trn_img, batch_size):
                 pair_correct += (solver.net.blobs['ip3'].data.argmax(1)
                               == solver.net.blobs['same_label'].data.squeeze()).sum()
 
-            trn_kway_acc[test_it] = kway_correct / (batch_size * num_test_batches)
-            trn_pair_acc[test_it] = pair_correct / (batch_size * num_test_batches)
+            trn_kway_acc[test_it] = kway_correct / (batch_size * num_tst_batches)
+            trn_pair_acc[test_it] = pair_correct / (batch_size * num_tst_batches)
 
 
             # tst kway and pair classification
             kway_correct = 0.0
             pair_correct = 0.0
-            for i in range(num_test_batches):
+            for i in range(num_tst_batches):
 
                 data_tst, labels_tst = load_tst_batch(i, batch_size, mean_trn_img)
                 solver.test_nets[1].set_input_arrays('data', data_tst, labels_tst)
@@ -522,13 +568,13 @@ def sgd(solver, mean_trn_img, batch_size):
                 pair_correct += (solver.test_nets[1].blobs['ip3'].data.argmax(1)
                               == solver.test_nets[1].blobs['same_label'].data.squeeze()).sum()
 
-            tst_kway_acc[test_it] = kway_correct / (batch_size * num_test_batches)
-            tst_pair_acc[test_it] = pair_correct / (batch_size * num_test_batches)
+            tst_kway_acc[test_it] = kway_correct / (batch_size * num_tst_batches)
+            tst_pair_acc[test_it] = pair_correct / (batch_size * num_tst_batches)
 
 
             # lfw classification
             pair_correct = 0.0
-            for i in range(num_test_batches):
+            for i in range(num_tst_batches):
 
                 data_lfw, labels_lfw = load_lfw_batch(i, batch_size, mean_trn_img)
                 solver.test_nets[0].set_input_arrays('data', data_lfw, labels_lfw)
@@ -543,7 +589,7 @@ def sgd(solver, mean_trn_img, batch_size):
 
                 #import IPython ; IPython.embed()
 
-            lfw_pair_acc[test_it] = pair_correct / (batch_size * num_test_batches)
+            lfw_pair_acc[test_it] = pair_correct / (batch_size * num_tst_batches)
 
 
             print 'trn_kway_acc', trn_kway_acc[test_it]
@@ -591,7 +637,7 @@ def main(args):
 
     # prime test network data layers
 
-    #test_sgd(solver, mean_trn_img, batch_size, niter=10, num_test_batches=10)
+    #test_sgd(solver, mean_trn_img, batch_size, niter=10, num_tst_batches=10)
     #import IPython ; IPython.embed()
 
     sgd(solver, mean_trn_img, batch_size)
