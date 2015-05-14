@@ -31,8 +31,8 @@ trn_src_file = join(model_root, 'clusters_2_seed=0_trn.txt.shuf')
 tst_src_file = join(model_root, 'clusters_2_seed=0_tst.txt.shuf')
 
 
-trn_file = join(model_root, 'clusters_2_seed=0_trn_siamese.txt')
-trn_b_file = join(model_root, 'clusters_2_seed=0_trn_siamese_b.txt')
+trn_file = join(model_root, 'clusters_2_seed=0_trn_siamese.txt.head')
+trn_b_file = join(model_root, 'clusters_2_seed=0_trn_siamese_b.txt.head')
 
 tst_file = join(model_root, 'clusters_2_seed=0_tst_siamese.txt')
 tst_b_file = join(model_root, 'clusters_2_seed=0_tst_siamese_b.txt')
@@ -45,8 +45,9 @@ lfw_b_file = join(model_root, 'lfw_b.txt')
 
 solver_file = join(model_root, 'solver.prototxt')
 #model_file = join(model_root, 'celeb_v0_iter_80000.caffemodel')
-model_file = join(model_root, 'celeb_v1_iter_280000.caffemodel')
+#model_file = join(model_root, 'celeb_v1_iter_280000.caffemodel')
 #model_file = join(model_root, 'celeb_v0_iter_10000.caffemodel')
+model_file = join(model_root, 'celeb_v0_iter_50000.caffemodel')
 
 lines_cache = {}
 images_cache = {}
@@ -100,7 +101,7 @@ def generate_not_same_pairs(label_a, labels, label_to_images, num_pairs):
                label_to_images[label_b][image_b])
         not_same_pairs.add(tup)
 
-    return not_same_pairs
+    return list(not_same_pairs)
 
 
 
@@ -450,7 +451,7 @@ def test_sgd(solver, mean_trn_img, batch_size, niter=10, num_tst_batches=10):
 
 
 
-def sgd(solver, mean_trn_img, batch_size):
+def sgd(solver, mean_trn_img, batch_size, sample=True):
 
     niter = 280000
     test_interval = 1000
@@ -465,8 +466,14 @@ def sgd(solver, mean_trn_img, batch_size):
 
     num_tst_batches = 20
     num_tst_batches = 118
+    num_tst_batches = 100
 
-    num_trn_batches = len(load_lines(trn_file)) / batch_size
+    # training data setup
+    if sample:
+        num_proposal_batches = 10
+        label_to_images_trn, labels = build_label_map(trn_src_file)
+    else:
+        num_trn_batches = len(load_lines(trn_file)) / batch_size
 
     #import IPython ; IPython.embed()
 
@@ -485,32 +492,57 @@ def sgd(solver, mean_trn_img, batch_size):
     solver.test_nets[0].set_input_arrays('data_b', data_lfw_b, labels_lfw_b)
 
 
-    # XXX
-    if False:
-        # sample pairs
-        label_to_images_trn, labels_trn = build_label_map(trn_src_file)
-
-        for label in labels_trn:
-            same_pairs = generate_same_pairs(label, label_to_images_trn[label])
-            not_same_pairs = generate_not_same_pairs(label, labels_trn,
-                                                     label_to_images_trn, len(same_pairs))
-
-            batch_pairs = same_pairs[:batch_size]
-            data_a, labels_a, data_b, labels_b = load_sampled_batch(batch_pairs, mean_trn_img)
-
-            import IPython ; IPython.embed()
-
-
 
     # the main solver loop
     for it in range(niter):
 
-        batch_num = np.random.randint(num_trn_batches)
+        if sample:
+            # select a label
+            label = np.random.randint(len(labels))
 
-        data_trn, labels_trn = load_trn_batch(batch_num, batch_size, mean_trn_img)
-        solver.net.set_input_arrays('data', data_trn, labels_trn)
-        data_trn_b, labels_trn_b = load_trn_b_batch(batch_num, batch_size, mean_trn_img)
-        solver.net.set_input_arrays('data_b', data_trn_b, labels_trn_b)
+            same_pairs = generate_same_pairs(label, label_to_images_trn[label])
+            not_same_pairs = generate_not_same_pairs(label, labels,
+                                                     label_to_images_trn, len(same_pairs))
+
+            batch_pairs = same_pairs[:batch_size/2] + not_same_pairs[:batch_size/2]
+            data_a, labels_a, data_b, labels_b = load_sampled_batch(batch_pairs, mean_trn_img)
+            solver.net.set_input_arrays('data', data_a, labels_a)
+            solver.net.set_input_arrays('data_b', data_b, labels_b)
+
+            t0 = time()
+            top_output = solver.net.forward()
+            time_forward = time() - t0
+
+            output = np.array(solver.net.blobs['ip3'].data)
+            siamese_label = solver.net.blobs['same_label'].data.squeeze()
+
+            hinge_loss = np.zeros(batch_size)
+
+            for i in range(batch_size):
+                output[i, siamese_label[i]] *= -1
+            output = np.maximum(0.0, 1.0 + output)
+
+            hinge_loss = output.sum(1)
+            num_no_loss = (hinge_loss == 0.0).sum()
+            print 'label %d: %d pairs had no siamese hinge loss' % (label, num_no_loss)
+
+            t0 = time()
+            top_output = solver.net.backward()
+            time_backward = time() - t0
+
+            print 'forward took %.4f backward took %.4f' % (time_forward, time_backward)
+
+            #import IPython ; IPython.embed()
+
+        else:
+            batch_num = np.random.randint(num_trn_batches)
+
+            data_trn, labels_trn = load_trn_batch(batch_num, batch_size, mean_trn_img)
+            solver.net.set_input_arrays('data', data_trn, labels_trn)
+            data_trn_b, labels_trn_b = load_trn_b_batch(batch_num, batch_size, mean_trn_img)
+            solver.net.set_input_arrays('data_b', data_trn_b, labels_trn_b)
+
+
 
         solver.step(1)  # SGD by Caffe
     
@@ -526,6 +558,8 @@ def sgd(solver, mean_trn_img, batch_size):
         if it % test_interval == 0:
             print 'Iteration', it, 'testing...'
             test_it = it // test_interval
+
+            #import IPython ; IPython.embed()
 
             # trn kway and pair classification
             kway_correct = 0.0
