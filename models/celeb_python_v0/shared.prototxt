@@ -237,12 +237,12 @@ layer {
   bottom: "pool5_XXX"
   top: "fc6_XXX"
   param {
-    lr_mult: 10
+    lr_mult: 1
     decay_mult: 1
     name: "fc6_w"
   }
   param {
-    lr_mult: 20
+    lr_mult: 2
     decay_mult: 0
     name: "fc6_b"
   }
@@ -273,4 +273,49 @@ layer {
     dropout_ratio: 0.5
   }
 }
+
+
+layer {
+  name: "fc7_XXX"
+  type: "InnerProduct"
+  bottom: "fc6_XXX"
+  top: "fc7_XXX"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+    name: "fc7_w"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "fc7_b"
+  }
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "gaussian"
+      std: 0.005
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu7_XXX"
+  type: "ReLU"
+  bottom: "fc7_XXX"
+  top: "fc7_XXX"
+}
+layer {
+  name: "drop7_XXX"
+  type: "Dropout"
+  bottom: "fc7_XXX"
+  top: "fc7_XXX"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+
 

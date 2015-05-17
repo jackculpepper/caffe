@@ -47,7 +47,10 @@ solver_file = join(model_root, 'solver.prototxt')
 #model_file = join(model_root, 'celeb_v0_iter_80000.caffemodel')
 #model_file = join(model_root, 'celeb_v1_iter_280000.caffemodel')
 #model_file = join(model_root, 'celeb_v0_iter_10000.caffemodel')
-model_file = join(model_root, 'celeb_v0_iter_50000.caffemodel')
+#model_file = join(model_root, 'celeb_v0_iter_50000.caffemodel')
+#model_file = join(model_root, 'celeb_v2_iter_30000.caffemodel')
+#model_file = join(model_root, 'celeb_v2_iter_40000.caffemodel')
+model_file = join(model_root, 'celeb_v3_iter_90000.caffemodel')
 
 lines_cache = {}
 images_cache = {}
@@ -523,8 +526,9 @@ def sgd(solver, mean_trn_img, batch_size, sample=True):
             output = np.maximum(0.0, 1.0 + output)
 
             hinge_loss = output.sum(1)
-            num_no_loss = (hinge_loss == 0.0).sum()
-            print 'label %d: %d pairs had no siamese hinge loss' % (label, num_no_loss)
+            num_same_no_loss = (hinge_loss == 0.0)[:batch_size/2].sum()
+            num_not_same_no_loss = (hinge_loss == 0.0)[batch_size/2:].sum()
+            print 'label %d: %d same pairs, %d not same pairs had no siamese hinge loss' % (label, num_same_no_loss, num_not_same_no_loss)
 
             t0 = time()
             top_output = solver.net.backward()
@@ -532,7 +536,7 @@ def sgd(solver, mean_trn_img, batch_size, sample=True):
 
             print 'forward took %.4f backward took %.4f' % (time_forward, time_backward)
 
-            #import IPython ; IPython.embed()
+            import IPython ; IPython.embed()
 
         else:
             batch_num = np.random.randint(num_trn_batches)
@@ -542,9 +546,7 @@ def sgd(solver, mean_trn_img, batch_size, sample=True):
             data_trn_b, labels_trn_b = load_trn_b_batch(batch_num, batch_size, mean_trn_img)
             solver.net.set_input_arrays('data_b', data_trn_b, labels_trn_b)
 
-
-
-        solver.step(1)  # SGD by Caffe
+            solver.step(1)  # SGD by Caffe
     
         # store the train loss
         train_loss[it] = solver.net.blobs['loss'].data

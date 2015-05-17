@@ -8,12 +8,12 @@ base_lr: 0.001
 lr_policy: "step"
 gamma: 0.1
 # stepsize should also be lower, as we're closer to being done
-stepsize: 80000
+stepsize: 40000
 display: 20
 max_iter: 280000
 momentum: 0.9
 weight_decay: 0.0005
 snapshot: 10000
-snapshot_prefix: "models/celeb_python_v0/celeb_v1"
+snapshot_prefix: "models/celeb_python_v0/celeb_v4"
 # uncomment the following to default to CPU mode solving
 # solver_mode: CPU

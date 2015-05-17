@@ -20,7 +20,6 @@ parser.add_argument('-d', '--device_id', type=int, help='''gpu device number''',
 
 
 model_file = 'models/celeb_python_v0/celeb_v1_iter_280000.caffemodel'
-model_prototxt = 'models/celeb_python_v0/deploy.prototxt'
 mean_file = 'models/celeb_python_v0/celeb34372_mean.npy'
 mean_file = 'models/celeb_python_v0/celeb_mean.npy'
 
@@ -36,15 +35,6 @@ lines_cache = {}
 images_cache = {}
 images_cache_hits = 0
 
-
-
-def load_classifier():
-    net = caffe.Classifier(model_prototxt, model_file,
-                           mean=np.load(mean_file),
-                           channel_swap=(2,1,0),
-                           raw_scale=255,
-                           image_dims=(227, 227))
-    return net
 
 
 def compute_mean_image(data_path, num_images=100000):
@@ -156,7 +146,7 @@ def load_batch(data_path, mean_trn_img,
         data[i, :, :, :] = input_image_t - mean_trn_img
         labels[i, 0, 0, 0] = label
 
-    print 'loaded batch in %.3f s' % ( time() - t0 )
+    print 'loaded batch in %.3f s' % ( time() - t0 ),
     print '%d cache hits' % images_cache_hits
 
     return data, labels
@@ -169,8 +159,9 @@ def load_tst1_batch(batch_num, batch_size, mean_trn_img):
     return load_batch(tst1_data_path, mean_trn_img,
                       batch_num, batch_size=batch_size)
 
-def load_trn_batch(batch_size, mean_trn_img):
-    return load_batch(trn_data_path, mean_trn_img, batch_size=batch_size)
+def load_trn_batch(batch_num, batch_size, mean_trn_img):
+    return load_batch(trn_data_path, mean_trn_img,
+                      batch_num, batch_size=batch_size)
 
 def warm(data_path):
     lines = load_lines(data_path)
@@ -238,15 +229,16 @@ def test_sgd(solver):
 def sgd(solver, mean_trn_img, batch_size):
 
     niter = 280000
-    test_interval = 25
+    tst_interval = 100
     # losses will also be stored in the log
     train_loss = np.zeros(niter)
-    test_acc = np.zeros(int(np.ceil(niter / test_interval)))
+    trn_acc = np.zeros(int(np.ceil(niter / tst_interval)))
+    tst_acc = np.zeros(int(np.ceil(niter / tst_interval)))
     output = np.zeros((niter, 8, 10))
 
-    num_test_batches = 20
+    num_tst_batches = 20
 
-    import IPython ; IPython.embed()
+    #import IPython ; IPython.embed()
 
     # prime test network data layers
     data_tst0, labels_tst0 = load_tst0_batch(0, batch_size, mean_trn_img)
@@ -257,40 +249,43 @@ def sgd(solver, mean_trn_img, batch_size):
 
 
     # the main solver loop
-    for it in range(niter):
+    for i in range(niter):
 
-        data_trn, labels_trn = load_trn_batch(batch_size, mean_trn_img)
-        solver.net.set_input_arrays(data_trn, labels_trn)
+        data_trn, labels_trn = load_trn_batch(-1, batch_size, mean_trn_img)
+        solver.net.set_input_arrays('data', data_trn, labels_trn)
 
         solver.step(1)  # SGD by Caffe
     
         # store the train loss
-        train_loss[it] = solver.net.blobs['loss'].data
-    
-        # store the output on the first test batch
-        #solver.test_nets[0].forward()
-        #solver.test_nets[1].forward()
-        #output[it] = solver.test_nets[0].blobs['ip2'].data[:8]
+        train_loss[i] = solver.net.blobs['loss'].data
     
         # run a full test every so often
-        if it % test_interval == 0:
-            print 'Iteration', it, 'testing...'
-            correct = 0.0
-            for test_it in range(num_test_batches):
+        if i % tst_interval == 0:
+            tst_it = i // tst_interval
 
-                data_tst0, labels_tst0 = load_tst0_batch(test_it, batch_size,
-                                                         mean_trn_img)
-                solver.test_nets[0].set_input_arrays('data',
-                                                     data_tst0, labels_tst0)
+            print 'Iteration', i, 'testing...'
+            correct = 0.0
+            for j in range(num_tst_batches):
+                data_tst0, labels_tst0 = load_tst0_batch(j, batch_size, mean_trn_img)
+                solver.test_nets[0].set_input_arrays('data', data_tst0, labels_tst0)
 
                 solver.test_nets[0].forward()
-                correct += (solver.test_nets[0].blobs['fc7'].data.argmax(1)
+                correct += (solver.test_nets[0].blobs['fc8'].data.argmax(1)
                                == solver.test_nets[0].blobs['label'].data).sum()
-            test_it = it // test_interval
-            test_acc[test_it] = \
-                correct / (batch_size * num_test_batches)
+            tst_acc[tst_it] = correct / (batch_size * num_tst_batches)
 
-            print 'test_acc', test_acc[test_it]
+            correct = 0.0
+            for j in range(num_tst_batches):
+                data_trn, labels_trn = load_trn_batch(j, batch_size, mean_trn_img)
+                solver.net.set_input_arrays('data', data_trn, labels_trn)
+
+                solver.net.forward()
+                correct += (solver.net.blobs['fc8'].data.argmax(1)
+                               == solver.net.blobs['label'].data).sum()
+            trn_acc[tst_it] = correct / (batch_size * num_tst_batches)
+
+            print 'trn_acc', trn_acc[tst_it]
+            print 'tst_acc', tst_acc[tst_it]
 
 
 def main(args):
@@ -305,7 +300,7 @@ def main(args):
 
 
     solver = caffe.SGDSolver(solver_file)
-    solver.net.copy_from(model_file)
+    #solver.net.copy_from(model_file)
 
     batch_size = solver.net.blobs['data'].data.shape[0]
     batch_shape = solver.net.blobs['data'].data.shape[1:]
