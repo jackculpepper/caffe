@@ -30,6 +30,7 @@ tst1_data_path = 'models/celeb_python_v0/binger_clean_tst.txt.shuf'
 
 solver_file = 'models/celeb_python_v0/solver.prototxt'
 model_file = 'models/celeb_python_v0/celeb_v0_iter_80000.caffemodel'
+model_file = 'models/celeb_python_v0/celeb_v6_iter_140000.caffemodel'
 
 lines_cache = {}
 images_cache = {}
@@ -237,6 +238,7 @@ def sgd(solver, mean_trn_img, batch_size):
     output = np.zeros((niter, 8, 10))
 
     num_tst_batches = 20
+    #num_tst_batches = 100
 
     #import IPython ; IPython.embed()
 
@@ -287,6 +289,8 @@ def sgd(solver, mean_trn_img, batch_size):
             print 'trn_acc', trn_acc[tst_it]
             print 'tst_acc', tst_acc[tst_it]
 
+            import IPython ; IPython.embed()
+
 
 def main(args):
     if args.device_id == -1:
@@ -300,7 +304,9 @@ def main(args):
 
 
     solver = caffe.SGDSolver(solver_file)
-    #solver.net.copy_from(model_file)
+    solver.net.copy_from(model_file)
+
+    #import IPython ; IPython.embed()
 
     batch_size = solver.net.blobs['data'].data.shape[0]
     batch_shape = solver.net.blobs['data'].data.shape[1:]
