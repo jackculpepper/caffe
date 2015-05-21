@@ -232,10 +232,10 @@ layer {
   }
 }
 layer {
-  name: "fc6_XXX"
+  name: "fc6_celeb_XXX"
   type: "InnerProduct"
   bottom: "pool5_XXX"
-  top: "fc6_XXX"
+  top: "fc6_celeb_XXX"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -261,14 +261,14 @@ layer {
 layer {
   name: "relu6_XXX"
   type: "ReLU"
-  bottom: "fc6_XXX"
-  top: "fc6_XXX"
+  bottom: "fc6_celeb_XXX"
+  top: "fc6_celeb_XXX"
 }
 layer {
   name: "drop6_XXX"
   type: "Dropout"
-  bottom: "fc6_XXX"
-  top: "fc6_XXX"
+  bottom: "fc6_celeb_XXX"
+  top: "fc6_celeb_XXX"
   dropout_param {
     dropout_ratio: 0.5
   }

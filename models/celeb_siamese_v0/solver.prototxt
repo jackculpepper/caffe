@@ -1,5 +1,5 @@
 net: "models/celeb_siamese_v0/train_val_siamese.prototxt"
-test_iter: 1172
+test_iter: 100
 test_net: "models/celeb_siamese_v0/lfw_test_siamese.prototxt"
 test_iter: 118
 test_interval: 1000

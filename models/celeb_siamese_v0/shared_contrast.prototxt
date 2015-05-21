@@ -2,7 +2,7 @@
 layer {
   name: "ip2_XXX"
   type: "InnerProduct"
-  bottom: "fc6_XXX"
+  bottom: "fc6_celeb_XXX"
   top: "ip2_XXX"
   param {
     lr_mult: 1

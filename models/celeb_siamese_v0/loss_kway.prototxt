@@ -1,9 +1,9 @@
 
 layer {
-  name: "fc7_XXX"
+  name: "fc7_celeb_XXX"
   type: "InnerProduct"
-  bottom: "fc6_XXX"
-  top: "fc7_XXX"
+  bottom: "fc6_celeb_XXX"
+  top: "fc7_celeb_XXX"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -31,7 +31,7 @@ layer {
 layer {
   name: "loss_XXX"
   type: "SoftmaxWithLoss"
-  bottom: "fc7_XXX"
+  bottom: "fc7_celeb_XXX"
   bottom: "label_XXX"
   top: "loss_XXX"
   loss_weight: 0.5
@@ -39,7 +39,7 @@ layer {
 layer {
   name: "accuracy_XXX"
   type: "Accuracy"
-  bottom: "fc7_XXX"
+  bottom: "fc7_celeb_XXX"
   bottom: "label_XXX"
   top: "accuracy_XXX"
   include {

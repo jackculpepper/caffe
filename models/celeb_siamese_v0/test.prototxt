@@ -15,7 +15,7 @@ layer {
   }
   image_data_param {
     source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese.txt"
-    batch_size: 50
+    batch_size: 25
   }
 }
 layer {
@@ -32,7 +32,7 @@ layer {
   }
   image_data_param {
     source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese.txt"
-    batch_size: 50
+    batch_size: 25
   }
 }
 
@@ -270,10 +270,10 @@ layer {
   }
 }
 layer {
-  name: "fc6"
+  name: "fc6_celeb"
   type: "InnerProduct"
   bottom: "pool5"
-  top: "fc6"
+  top: "fc6_celeb"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -299,14 +299,14 @@ layer {
 layer {
   name: "relu6"
   type: "ReLU"
-  bottom: "fc6"
-  top: "fc6"
+  bottom: "fc6_celeb"
+  top: "fc6_celeb"
 }
 layer {
   name: "drop6"
   type: "Dropout"
-  bottom: "fc6"
-  top: "fc6"
+  bottom: "fc6_celeb"
+  top: "fc6_celeb"
   dropout_param {
     dropout_ratio: 0.5
   }
@@ -314,10 +314,10 @@ layer {
 
 
 layer {
-  name: "fc7"
+  name: "fc7_celeb"
   type: "InnerProduct"
-  bottom: "fc6"
-  top: "fc7"
+  bottom: "fc6_celeb"
+  top: "fc7_celeb"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -345,7 +345,7 @@ layer {
 layer {
   name: "loss"
   type: "SoftmaxWithLoss"
-  bottom: "fc7"
+  bottom: "fc7_celeb"
   bottom: "label"
   top: "loss"
   loss_weight: 0.5
@@ -353,7 +353,7 @@ layer {
 layer {
   name: "accuracy"
   type: "Accuracy"
-  bottom: "fc7"
+  bottom: "fc7_celeb"
   bottom: "label"
   top: "accuracy"
   include {

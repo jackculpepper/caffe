@@ -13,7 +13,7 @@ layer {
   }
   image_data_param {
     source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese_XXX.txt"
-    batch_size: 50
+    batch_size: 25
   }
 }
 layer {
@@ -30,7 +30,7 @@ layer {
   }
   image_data_param {
     source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese_XXX.txt"
-    batch_size: 50
+    batch_size: 25
   }
 }
 
