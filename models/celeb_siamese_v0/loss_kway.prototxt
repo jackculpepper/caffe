@@ -1,0 +1,48 @@
+
+layer {
+  name: "fc7_XXX"
+  type: "InnerProduct"
+  bottom: "fc6_XXX"
+  top: "fc7_XXX"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+    name: "fc7_w"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "fc7_b"
+  }
+  inner_product_param {
+    num_output: 19805
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+
+layer {
+  name: "loss_XXX"
+  type: "SoftmaxWithLoss"
+  bottom: "fc7_XXX"
+  bottom: "label_XXX"
+  top: "loss_XXX"
+  loss_weight: 0.5
+}
+layer {
+  name: "accuracy_XXX"
+  type: "Accuracy"
+  bottom: "fc7_XXX"
+  bottom: "label_XXX"
+  top: "accuracy_XXX"
+  include {
+    phase: TEST
+  }
+}

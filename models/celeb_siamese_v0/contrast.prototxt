@@ -1,0 +1,63 @@
+
+layer {
+    name: "diff"
+    type: "Eltwise"
+    eltwise_param {
+      coeff: 1
+      coeff: -1
+    }
+    bottom: "ip2"
+    bottom: "ip2_b"
+    top: "diff"
+}
+
+layer {
+    name: "absval"
+    type: "AbsVal"
+    bottom: "diff"
+    top: "absval"
+}
+
+layer {
+  name: "ip3"
+  type: "InnerProduct"
+  bottom: "absval"
+  top: "ip3"
+  param {
+    lr_mult: 0
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "constant"
+      value: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer {
+  name: "siamese_hinge_loss"
+  type: "HingeLoss"
+  bottom: "ip3"
+  bottom: "same_label"
+  top: "siamese_hinge_loss"
+  loss_weight: 0.5
+}
+
+layer {
+  name: "siamese_accuracy"
+  type: "Accuracy"
+  bottom: "ip3"
+  bottom: "same_label"
+  top: "siamese_accuracy"
+}
+

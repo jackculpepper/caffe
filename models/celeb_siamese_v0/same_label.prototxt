@@ -1,0 +1,49 @@
+
+
+layer {
+  name: "diff_label_ab"
+  type: "Eltwise"
+  eltwise_param {
+    coeff: 1
+    coeff: -1
+  }
+  bottom: "label"
+  bottom: "label_b"
+  top: "diff_label_ab"
+}
+
+layer {
+  name: "diff_label_ba"
+  type: "Eltwise"
+  eltwise_param {
+    coeff: 1
+    coeff: -1
+  }
+  bottom: "label_b"
+  bottom: "label"
+  top: "diff_label_ba"
+}
+
+layer {
+  name: "diff_label_ab_thresh"
+  type: "Threshold"
+  bottom: "diff_label_ab"
+  top: "diff_label_ab_thresh"
+}
+
+layer {
+  name: "diff_label_ba_thresh"
+  type: "Threshold"
+  bottom: "diff_label_ba"
+  top: "diff_label_ba_thresh"
+}
+
+layer {
+  name: "same_label"
+  type: "Eltwise"
+  bottom: "diff_label_ab_thresh"
+  bottom: "diff_label_ba_thresh"
+  top: "same_label"
+}
+
+
