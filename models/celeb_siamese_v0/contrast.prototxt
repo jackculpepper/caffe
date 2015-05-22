@@ -35,7 +35,7 @@ layer {
     num_output: 1
     weight_filler {
       type: "constant"
-      value: 0.001
+      value: 0.01
     }
     bias_filler {
       type: "constant"

@@ -14,7 +14,7 @@ layer {
     mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese_small.txt"
+    source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese.txt"
     batch_size: 25
   }
 }
@@ -27,11 +27,11 @@ layer {
     phase: TEST
   }
   transform_param {
-    mirror: true
+    mirror: false
     mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese_small.txt"
+    source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese.txt"
     batch_size: 25
   }
 }
@@ -50,7 +50,7 @@ layer {
     mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese_small_b.txt"
+    source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese_b.txt"
     batch_size: 25
   }
 }
@@ -63,11 +63,11 @@ layer {
     phase: TEST
   }
   transform_param {
-    mirror: true
+    mirror: false
     mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese_small_b.txt"
+    source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese_b.txt"
     batch_size: 25
   }
 }

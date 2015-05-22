@@ -22,8 +22,8 @@ OUTFILE=train_val_siamese.prototxt
 echo >$OUTFILE
 
 cat header.prototxt >>$OUTFILE
-cat data_small.prototxt | sed 's/_XXX//g' >>$OUTFILE
-cat data_small.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
+cat data.prototxt | sed 's/_XXX//g' >>$OUTFILE
+cat data.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
 
 cat shared_frozen.prototxt | sed 's/_XXX//g' >>$OUTFILE
 cat shared_frozen.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
