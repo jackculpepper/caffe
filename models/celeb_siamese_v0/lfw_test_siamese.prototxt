@@ -1,5 +1,5 @@
 
-name: "LFWCaffeNet"
+name: "lfw_test_siamese"
 
 layer {
   name: "data"

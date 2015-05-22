@@ -264,7 +264,7 @@ void Solver<Dtype>::TestAll() {
 template <typename Dtype>
 void Solver<Dtype>::Test(const int test_net_id) {
   LOG(INFO) << "Iteration " << iter_
-            << ", Testing net (#" << test_net_id << ")";
+            << ", Testing net (#" << test_net_id << ") " << test_nets_[test_net_id]->name();
   CHECK_NOTNULL(test_nets_[test_net_id].get())->
       ShareTrainedLayersWith(net_.get());
   vector<Dtype> test_score;

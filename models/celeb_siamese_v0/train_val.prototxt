@@ -1,5 +1,5 @@
 
-name: "CelebCaffeNet"
+name: "train_val"
 
 layer {
   name: "data"

@@ -1,5 +1,5 @@
 
-name: "CelebCaffeNet"
+name: "test_siamese"
 
 layer {
   name: "data"

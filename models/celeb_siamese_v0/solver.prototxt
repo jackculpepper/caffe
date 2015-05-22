@@ -14,4 +14,4 @@ max_iter: 280000
 momentum: 0.9
 weight_decay: 0.0005
 snapshot: 10000
-snapshot_prefix: "models/celeb_siamese_v0/celeb_v8"
+snapshot_prefix: "models/celeb_siamese_v0/celeb_v9"

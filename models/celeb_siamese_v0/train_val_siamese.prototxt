@@ -1,5 +1,5 @@
 
-name: "CelebCaffeNet"
+name: "train_val_siamese"
 
 layer {
   name: "data"
@@ -78,12 +78,12 @@ layer {
   bottom: "data"
   top: "conv1"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "conv1_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv1_b"
   }
@@ -135,12 +135,12 @@ layer {
   bottom: "norm1"
   top: "conv2"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "conv2_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv2_b"
   }
@@ -193,12 +193,12 @@ layer {
   bottom: "norm2"
   top: "conv3"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "conv3_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv3_b"
   }
@@ -228,12 +228,12 @@ layer {
   bottom: "conv3"
   top: "conv4"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "conv4_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv4_b"
   }
@@ -264,12 +264,12 @@ layer {
   bottom: "conv4"
   top: "conv5"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "conv5_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv5_b"
   }
@@ -311,12 +311,12 @@ layer {
   bottom: "pool5"
   top: "fc6_celeb"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "fc6_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "fc6_b"
   }
@@ -354,12 +354,12 @@ layer {
   bottom: "data_b"
   top: "conv1_b"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "conv1_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv1_b"
   }
@@ -411,12 +411,12 @@ layer {
   bottom: "norm1_b"
   top: "conv2_b"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "conv2_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv2_b"
   }
@@ -469,12 +469,12 @@ layer {
   bottom: "norm2_b"
   top: "conv3_b"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "conv3_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv3_b"
   }
@@ -504,12 +504,12 @@ layer {
   bottom: "conv3_b"
   top: "conv4_b"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "conv4_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv4_b"
   }
@@ -540,12 +540,12 @@ layer {
   bottom: "conv4_b"
   top: "conv5_b"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "conv5_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv5_b"
   }
@@ -587,12 +587,12 @@ layer {
   bottom: "pool5_b"
   top: "fc6_celeb_b"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "fc6_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "fc6_b"
   }
@@ -680,12 +680,12 @@ layer {
   bottom: "fc6_celeb"
   top: "fc7_celeb"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "fc7_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "fc7_b"
   }
@@ -728,12 +728,12 @@ layer {
   bottom: "fc6_celeb_b"
   top: "fc7_celeb_b"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "fc7_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "fc7_b"
   }
