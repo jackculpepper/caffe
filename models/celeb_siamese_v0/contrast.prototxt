@@ -25,17 +25,17 @@ layer {
   top: "ip3"
   param {
     lr_mult: 0
-    decay_mult: 1
+    decay_mult: 0
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "constant"
-      value: 0.01
+      value: 0.001
     }
     bias_filler {
       type: "constant"
@@ -45,18 +45,44 @@ layer {
 }
 
 layer {
-  name: "siamese_hinge_loss"
-  type: "HingeLoss"
+  name: "ip4"
+  type: "InnerProduct"
   bottom: "ip3"
+  top: "ip4"
+  param {
+    lr_mult: 1
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer {
+  name: "siamese_softmax_loss"
+  type: "SoftmaxWithLoss"
+  bottom: "ip4"
   bottom: "same_label"
-  top: "siamese_hinge_loss"
-  loss_weight: 0.5
+  top: "siamese_softmax_loss"
+  loss_weight: 1.5
 }
 
 layer {
   name: "siamese_accuracy"
   type: "Accuracy"
-  bottom: "ip3"
+  bottom: "ip4"
   bottom: "same_label"
   top: "siamese_accuracy"
 }

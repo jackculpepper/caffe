@@ -1,9 +1,11 @@
 net: "models/celeb_siamese_v0/train_val_siamese.prototxt"
-test_iter: 100
+test_iter: 20
 test_net: "models/celeb_siamese_v0/lfw_test_siamese.prototxt"
-test_iter: 118
+test_iter: 237
+test_net: "models/celeb_siamese_v0/test_siamese.prototxt"
+test_iter: 20
 test_interval: 1000
-base_lr: 0.01
+base_lr: 0.001
 lr_policy: "step"
 gamma: 0.1
 stepsize: 80000
@@ -12,4 +14,4 @@ max_iter: 280000
 momentum: 0.9
 weight_decay: 0.0005
 snapshot: 10000
-snapshot_prefix: "models/celeb_siamese_v0/celeb_v0"
+snapshot_prefix: "models/celeb_siamese_v0/celeb_v6"

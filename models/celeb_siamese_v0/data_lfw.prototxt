@@ -1,0 +1,19 @@
+
+layer {
+  name: "data_XXX"
+  type: "ImageData"
+  top: "data_XXX"
+  top: "label_XXX"
+  include {
+    phase: TEST
+  }
+  transform_param {
+    mirror: false
+    mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
+  }
+  image_data_param {
+    source: "models/celeb_siamese_v0/lfw_XXX.txt"
+    batch_size: 25
+  }
+}
+
