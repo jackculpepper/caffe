@@ -36,6 +36,7 @@ cat shared_contrast.prototxt | sed 's/_XXX//g' >>$OUTFILE
 cat shared_contrast.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
 
 cat contrast.prototxt >>$OUTFILE
+cat contrast_contrastiveloss.prototxt >>$OUTFILE
 
 OUTFILE=test_siamese.prototxt
 echo >$OUTFILE

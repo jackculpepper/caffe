@@ -593,7 +593,7 @@ layer {
 
 
 layer {
-  name: "diff_label_ab"
+  name: "label_diff"
   type: "Eltwise"
   eltwise_param {
     coeff: 1
@@ -601,40 +601,20 @@ layer {
   }
   bottom: "label"
   bottom: "label_b"
-  top: "diff_label_ab"
+  top: "label_diff"
 }
 
 layer {
-  name: "diff_label_ba"
-  type: "Eltwise"
-  eltwise_param {
-    coeff: 1
-    coeff: -1
-  }
-  bottom: "label_b"
-  bottom: "label"
-  top: "diff_label_ba"
+    name: "absval"
+    type: "AbsVal"
+    bottom: "label_diff"
+    top: "label_diff_abs"
 }
 
 layer {
-  name: "diff_label_ab_thresh"
+  name: "label_diff_abs_thresh"
   type: "Threshold"
-  bottom: "diff_label_ab"
-  top: "diff_label_ab_thresh"
-}
-
-layer {
-  name: "diff_label_ba_thresh"
-  type: "Threshold"
-  bottom: "diff_label_ba"
-  top: "diff_label_ba_thresh"
-}
-
-layer {
-  name: "same_label"
-  type: "Eltwise"
-  bottom: "diff_label_ab_thresh"
-  bottom: "diff_label_ba_thresh"
+  bottom: "label_diff_abs"
   top: "same_label"
 }
 
@@ -775,7 +755,7 @@ layer {
   bottom: "ip4"
   bottom: "same_label"
   top: "siamese_softmax_loss"
-  loss_weight: 1.5
+  loss_weight: 0.5
 }
 
 layer {

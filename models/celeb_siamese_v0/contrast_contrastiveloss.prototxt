@@ -1,0 +1,14 @@
+
+layer {
+  name: "contrastive_loss"
+  type: "ContrastiveLoss"
+  bottom: "ip2"
+  bottom: "ip2_b"
+  bottom: "same_label"
+  top: "contrastive_loss"
+  contrastive_loss_param {
+    margin: 1
+  }
+  loss_weight: 0.5
+}
+
