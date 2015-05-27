@@ -43,7 +43,7 @@ layer {
   top: "conv1"
   param {
     lr_mult: 1
-    decay_mult: 1
+    decay_mult: 0
     name: "conv1_w"
   }
   param {
@@ -100,7 +100,7 @@ layer {
   top: "conv2"
   param {
     lr_mult: 1
-    decay_mult: 1
+    decay_mult: 0
     name: "conv2_w"
   }
   param {
@@ -158,7 +158,7 @@ layer {
   top: "conv3"
   param {
     lr_mult: 1
-    decay_mult: 1
+    decay_mult: 0
     name: "conv3_w"
   }
   param {
@@ -193,7 +193,7 @@ layer {
   top: "conv4"
   param {
     lr_mult: 1
-    decay_mult: 1
+    decay_mult: 0
     name: "conv4_w"
   }
   param {
@@ -229,7 +229,7 @@ layer {
   top: "conv5"
   param {
     lr_mult: 1
-    decay_mult: 1
+    decay_mult: 0
     name: "conv5_w"
   }
   param {
@@ -308,9 +308,52 @@ layer {
   bottom: "fc6_celeb"
   top: "fc6_celeb"
   dropout_param {
-    dropout_ratio: 0.5
+    dropout_ratio: 0.1
   }
 }
+
+#layer {
+#  name: "fc7"
+#  type: "InnerProduct"
+#  bottom: "fc6_celeb"
+#  top: "fc7"
+#  param {
+#    lr_mult: 1
+#    decay_mult: 1
+#    name: "fc7_w"
+#  }
+#  param {
+#    lr_mult: 2
+#    decay_mult: 0
+#    name: "fc7_b"
+#  }
+#  inner_product_param {
+#    num_output: 1024
+#    weight_filler {
+#      type: "gaussian"
+#      std: 0.005
+#    }
+#    bias_filler {
+#      type: "constant"
+#      value: 1
+#    }
+#  }
+#}
+#layer {
+#  name: "relu7"
+#  type: "ReLU"
+#  bottom: "fc7"
+#  top: "fc7"
+#}
+#layer {
+#  name: "drop7"
+#  type: "Dropout"
+#  bottom: "fc7"
+#  top: "fc7"
+#  dropout_param {
+#    dropout_ratio: 0.5
+#  }
+#}
 
 
 layer {
@@ -343,12 +386,12 @@ layer {
 
 
 layer {
-  name: "loss"
+  name: "softmax_loss"
   type: "SoftmaxWithLoss"
   bottom: "fc7_celeb"
   bottom: "label"
-  top: "loss"
-  loss_weight: 0.5
+  top: "softmax_loss"
+  loss_weight: 1.0
 }
 layer {
   name: "accuracy"

@@ -12,7 +12,7 @@ layer {
     mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/lfw_XXX.txt"
+    source: "models/celeb_siamese_v0/lfw_small_XXX.txt"
     batch_size: 25
   }
 }

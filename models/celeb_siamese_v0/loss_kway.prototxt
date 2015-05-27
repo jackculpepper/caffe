@@ -29,12 +29,12 @@ layer {
 
 
 layer {
-  name: "loss_XXX"
+  name: "softmax_loss_XXX"
   type: "SoftmaxWithLoss"
   bottom: "fc7_celeb_XXX"
   bottom: "label_XXX"
-  top: "loss_XXX"
-  loss_weight: 0.5
+  top: "softmax_loss_XXX"
+  loss_weight: 1.0
 }
 layer {
   name: "accuracy_XXX"

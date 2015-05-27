@@ -22,18 +22,18 @@ OUTFILE=train_val_siamese.prototxt
 echo >$OUTFILE
 
 cat header_train_val_siamese.prototxt >>$OUTFILE
-cat data.prototxt | sed 's/_XXX//g' >>$OUTFILE
-cat data.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
+cat data_small.prototxt | sed 's/_XXX//g' >>$OUTFILE
+cat data_small.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
 
-cat shared.prototxt | sed 's/_XXX//g' >>$OUTFILE
-cat shared.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
+cat shared_frozen.prototxt | sed 's/_XXX//g' >>$OUTFILE
+cat shared_frozen.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
 
 cat same_label.prototxt >>$OUTFILE
 cat loss_kway.prototxt | sed 's/_XXX//g' >>$OUTFILE
-cat loss_kway.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
+#cat loss_kway.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
 
-cat shared_contrast.prototxt | sed 's/_XXX//g' >>$OUTFILE
-cat shared_contrast.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
+cat shared_contrast_frozen.prototxt | sed 's/_XXX//g' >>$OUTFILE
+cat shared_contrast_frozen.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
 
 cat contrast.prototxt >>$OUTFILE
 cat contrast_contrastiveloss.prototxt >>$OUTFILE
@@ -52,6 +52,7 @@ cat same_label.prototxt >>$OUTFILE
 cat shared_contrast.prototxt | sed 's/_XXX//g' >>$OUTFILE
 cat shared_contrast.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
 cat contrast.prototxt >>$OUTFILE
+cat contrast_contrastiveloss.prototxt >>$OUTFILE
 
 
 OUTFILE=lfw_test_siamese.prototxt
@@ -68,4 +69,5 @@ cat same_label.prototxt >>$OUTFILE
 cat shared_contrast.prototxt | sed 's/_XXX//g' >>$OUTFILE
 cat shared_contrast.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
 cat contrast.prototxt >>$OUTFILE
+cat contrast_contrastiveloss.prototxt >>$OUTFILE
 

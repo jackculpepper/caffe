@@ -11,17 +11,29 @@ layer {
     top: "diff"
 }
 
+#layer {
+#    name: "absval"
+#    type: "AbsVal"
+#    bottom: "diff"
+#    top: "absval"
+#}
+
+
 layer {
-    name: "absval"
-    type: "AbsVal"
+    name: "sqrval"
+    type: "Eltwise"
+    eltwise_param {
+      operation: PROD
+    }
     bottom: "diff"
-    top: "absval"
+    bottom: "diff"
+    top: "sqrval"
 }
 
 layer {
   name: "ip3"
   type: "InnerProduct"
-  bottom: "absval"
+  bottom: "sqrval"
   top: "ip3"
   param {
     lr_mult: 0
@@ -35,7 +47,7 @@ layer {
     num_output: 1
     weight_filler {
       type: "constant"
-      value: 0.01
+      value: 1.0
     }
     bias_filler {
       type: "constant"
@@ -65,9 +77,16 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 1
     }
   }
+}
+
+layer {
+  name: "distrelu"
+  type: "ReLU"
+  bottom: "ip4"
+  top: "ip4"
 }
 
 layer {

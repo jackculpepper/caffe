@@ -14,7 +14,7 @@ layer {
     mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese.txt"
+    source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese_small.txt"
     batch_size: 25
   }
 }
@@ -27,11 +27,11 @@ layer {
     phase: TEST
   }
   transform_param {
-    mirror: false
+    mirror: true
     mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese.txt"
+    source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese_small.txt"
     batch_size: 25
   }
 }
@@ -50,7 +50,7 @@ layer {
     mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese_b.txt"
+    source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese_small_b.txt"
     batch_size: 25
   }
 }
@@ -63,11 +63,11 @@ layer {
     phase: TEST
   }
   transform_param {
-    mirror: false
+    mirror: true
     mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese_b.txt"
+    source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese_small_b.txt"
     batch_size: 25
   }
 }
@@ -78,12 +78,12 @@ layer {
   bottom: "data"
   top: "conv1"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
     name: "conv1_w"
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
     name: "conv1_b"
   }
@@ -135,12 +135,12 @@ layer {
   bottom: "norm1"
   top: "conv2"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
     name: "conv2_w"
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
     name: "conv2_b"
   }
@@ -193,12 +193,12 @@ layer {
   bottom: "norm2"
   top: "conv3"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
     name: "conv3_w"
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
     name: "conv3_b"
   }
@@ -228,12 +228,12 @@ layer {
   bottom: "conv3"
   top: "conv4"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
     name: "conv4_w"
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
     name: "conv4_b"
   }
@@ -264,12 +264,12 @@ layer {
   bottom: "conv4"
   top: "conv5"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
     name: "conv5_w"
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
     name: "conv5_b"
   }
@@ -311,12 +311,12 @@ layer {
   bottom: "pool5"
   top: "fc6_celeb"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
     name: "fc6_w"
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
     name: "fc6_b"
   }
@@ -354,12 +354,12 @@ layer {
   bottom: "data_b"
   top: "conv1_b"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
     name: "conv1_w"
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
     name: "conv1_b"
   }
@@ -411,12 +411,12 @@ layer {
   bottom: "norm1_b"
   top: "conv2_b"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
     name: "conv2_w"
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
     name: "conv2_b"
   }
@@ -469,12 +469,12 @@ layer {
   bottom: "norm2_b"
   top: "conv3_b"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
     name: "conv3_w"
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
     name: "conv3_b"
   }
@@ -504,12 +504,12 @@ layer {
   bottom: "conv3_b"
   top: "conv4_b"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
     name: "conv4_w"
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
     name: "conv4_b"
   }
@@ -540,12 +540,12 @@ layer {
   bottom: "conv4_b"
   top: "conv5_b"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
     name: "conv5_w"
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
     name: "conv5_b"
   }
@@ -587,12 +587,12 @@ layer {
   bottom: "pool5_b"
   top: "fc6_celeb_b"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
     name: "fc6_w"
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     decay_mult: 0
     name: "fc6_b"
   }
@@ -684,12 +684,12 @@ layer {
 
 
 layer {
-  name: "loss"
+  name: "softmax_loss"
   type: "SoftmaxWithLoss"
   bottom: "fc7_celeb"
   bottom: "label"
-  top: "loss"
-  loss_weight: 0.5
+  top: "softmax_loss"
+  loss_weight: 1.0
 }
 layer {
   name: "accuracy"
@@ -703,70 +703,20 @@ layer {
 }
 
 layer {
-  name: "fc7_celeb_b"
-  type: "InnerProduct"
-  bottom: "fc6_celeb_b"
-  top: "fc7_celeb_b"
-  param {
-    lr_mult: 1
-    decay_mult: 1
-    name: "fc7_w"
-  }
-  param {
-    lr_mult: 2
-    decay_mult: 0
-    name: "fc7_b"
-  }
-  inner_product_param {
-    num_output: 19805
-    weight_filler {
-      type: "gaussian"
-      std: 0.01
-    }
-    bias_filler {
-      type: "constant"
-      value: 0
-    }
-  }
-}
-
-
-layer {
-  name: "loss_b"
-  type: "SoftmaxWithLoss"
-  bottom: "fc7_celeb_b"
-  bottom: "label_b"
-  top: "loss_b"
-  loss_weight: 0.5
-}
-layer {
-  name: "accuracy_b"
-  type: "Accuracy"
-  bottom: "fc7_celeb_b"
-  bottom: "label_b"
-  top: "accuracy_b"
-  include {
-    phase: TEST
-  }
-}
-
-layer {
   name: "ip2"
   type: "InnerProduct"
   bottom: "fc6_celeb"
   top: "ip2"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
     name: "ip2_w"
   }
   param {
-    lr_mult: 2
-    decay_mult: 0
+    lr_mult: 0
     name: "ip2_b"
   }
   inner_product_param {
-    num_output: 1024
+    num_output: 64
     weight_filler {
       type: "gaussian"
       std: 0.005
@@ -785,17 +735,15 @@ layer {
   bottom: "fc6_celeb_b"
   top: "ip2_b"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
     name: "ip2_w"
   }
   param {
-    lr_mult: 2
-    decay_mult: 0
+    lr_mult: 0
     name: "ip2_b"
   }
   inner_product_param {
-    num_output: 1024
+    num_output: 64
     weight_filler {
       type: "gaussian"
       std: 0.005
@@ -820,17 +768,29 @@ layer {
     top: "diff"
 }
 
+#layer {
+#    name: "absval"
+#    type: "AbsVal"
+#    bottom: "diff"
+#    top: "absval"
+#}
+
+
 layer {
-    name: "absval"
-    type: "AbsVal"
+    name: "sqrval"
+    type: "Eltwise"
+    eltwise_param {
+      operation: PROD
+    }
     bottom: "diff"
-    top: "absval"
+    bottom: "diff"
+    top: "sqrval"
 }
 
 layer {
   name: "ip3"
   type: "InnerProduct"
-  bottom: "absval"
+  bottom: "sqrval"
   top: "ip3"
   param {
     lr_mult: 0
@@ -844,7 +804,7 @@ layer {
     num_output: 1
     weight_filler {
       type: "constant"
-      value: 0.01
+      value: 1.0
     }
     bias_filler {
       type: "constant"
@@ -874,9 +834,16 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 1
     }
   }
+}
+
+layer {
+  name: "distrelu"
+  type: "ReLU"
+  bottom: "ip4"
+  top: "ip4"
 }
 
 layer {
@@ -907,6 +874,6 @@ layer {
   contrastive_loss_param {
     margin: 1
   }
-  loss_weight: 0.5
+  loss_weight: 1.0
 }
 

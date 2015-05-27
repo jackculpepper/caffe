@@ -4,7 +4,7 @@ layer {
   bottom: "data_XXX"
   top: "conv1_XXX"
   param {
-    lr_mult: 1
+    lr_mult: 0
     decay_mult: 0
     name: "conv1_w"
   }
@@ -61,7 +61,7 @@ layer {
   bottom: "norm1_XXX"
   top: "conv2_XXX"
   param {
-    lr_mult: 1
+    lr_mult: 0
     decay_mult: 0
     name: "conv2_w"
   }
@@ -119,7 +119,7 @@ layer {
   bottom: "norm2_XXX"
   top: "conv3_XXX"
   param {
-    lr_mult: 1
+    lr_mult: 0
     decay_mult: 0
     name: "conv3_w"
   }
@@ -154,7 +154,7 @@ layer {
   bottom: "conv3_XXX"
   top: "conv4_XXX"
   param {
-    lr_mult: 1
+    lr_mult: 0
     decay_mult: 0
     name: "conv4_w"
   }
@@ -190,7 +190,7 @@ layer {
   bottom: "conv4_XXX"
   top: "conv5_XXX"
   param {
-    lr_mult: 1
+    lr_mult: 0
     decay_mult: 0
     name: "conv5_w"
   }
@@ -237,8 +237,8 @@ layer {
   bottom: "pool5_XXX"
   top: "fc6_celeb_XXX"
   param {
-    lr_mult: 1
-    decay_mult: 1
+    lr_mult: 0
+    decay_mult: 0
     name: "fc6_w"
   }
   param {
@@ -270,50 +270,7 @@ layer {
   bottom: "fc6_celeb_XXX"
   top: "fc6_celeb_XXX"
   dropout_param {
-    dropout_ratio: 0.1
+    dropout_ratio: 0.5
   }
 }
-
-#layer {
-#  name: "fc7_XXX"
-#  type: "InnerProduct"
-#  bottom: "fc6_celeb_XXX"
-#  top: "fc7_XXX"
-#  param {
-#    lr_mult: 1
-#    decay_mult: 1
-#    name: "fc7_w"
-#  }
-#  param {
-#    lr_mult: 2
-#    decay_mult: 0
-#    name: "fc7_b"
-#  }
-#  inner_product_param {
-#    num_output: 1024
-#    weight_filler {
-#      type: "gaussian"
-#      std: 0.005
-#    }
-#    bias_filler {
-#      type: "constant"
-#      value: 1
-#    }
-#  }
-#}
-#layer {
-#  name: "relu7_XXX"
-#  type: "ReLU"
-#  bottom: "fc7_XXX"
-#  top: "fc7_XXX"
-#}
-#layer {
-#  name: "drop7_XXX"
-#  type: "Dropout"
-#  bottom: "fc7_XXX"
-#  top: "fc7_XXX"
-#  dropout_param {
-#    dropout_ratio: 0.5
-#  }
-#}
 

@@ -5,11 +5,11 @@ layer {
   bottom: "fc6_celeb_XXX"
   top: "ip2_XXX"
   param {
-    lr_mult: 1
+    lr_mult: 0
     name: "ip2_w"
   }
   param {
-    lr_mult: 2
+    lr_mult: 0
     name: "ip2_b"
   }
   inner_product_param {

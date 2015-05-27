@@ -9,6 +9,6 @@ layer {
   contrastive_loss_param {
     margin: 1
   }
-  loss_weight: 0.5
+  loss_weight: 1.0
 }
 
