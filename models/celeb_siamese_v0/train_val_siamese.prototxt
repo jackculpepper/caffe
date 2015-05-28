@@ -14,7 +14,7 @@ layer {
     mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese_small.txt"
+    source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese.txt"
     batch_size: 25
   }
 }
@@ -27,11 +27,11 @@ layer {
     phase: TEST
   }
   transform_param {
-    mirror: true
+    mirror: false
     mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese_small.txt"
+    source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese.txt"
     batch_size: 25
   }
 }
@@ -50,7 +50,7 @@ layer {
     mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese_small_b.txt"
+    source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese_b.txt"
     batch_size: 25
   }
 }
@@ -63,11 +63,11 @@ layer {
     phase: TEST
   }
   transform_param {
-    mirror: true
+    mirror: false
     mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese_small_b.txt"
+    source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese_b.txt"
     batch_size: 25
   }
 }
@@ -78,12 +78,12 @@ layer {
   bottom: "data"
   top: "conv1"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 0
     name: "conv1_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv1_b"
   }
@@ -135,12 +135,12 @@ layer {
   bottom: "norm1"
   top: "conv2"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 0
     name: "conv2_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv2_b"
   }
@@ -193,12 +193,12 @@ layer {
   bottom: "norm2"
   top: "conv3"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 0
     name: "conv3_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv3_b"
   }
@@ -228,12 +228,12 @@ layer {
   bottom: "conv3"
   top: "conv4"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 0
     name: "conv4_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv4_b"
   }
@@ -264,12 +264,12 @@ layer {
   bottom: "conv4"
   top: "conv5"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 0
     name: "conv5_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv5_b"
   }
@@ -311,12 +311,12 @@ layer {
   bottom: "pool5"
   top: "fc6_celeb"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "fc6_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "fc6_b"
   }
@@ -344,9 +344,52 @@ layer {
   bottom: "fc6_celeb"
   top: "fc6_celeb"
   dropout_param {
-    dropout_ratio: 0.5
+    dropout_ratio: 0.1
   }
 }
+
+#layer {
+#  name: "fc7"
+#  type: "InnerProduct"
+#  bottom: "fc6_celeb"
+#  top: "fc7"
+#  param {
+#    lr_mult: 1
+#    decay_mult: 1
+#    name: "fc7_w"
+#  }
+#  param {
+#    lr_mult: 2
+#    decay_mult: 0
+#    name: "fc7_b"
+#  }
+#  inner_product_param {
+#    num_output: 1024
+#    weight_filler {
+#      type: "gaussian"
+#      std: 0.005
+#    }
+#    bias_filler {
+#      type: "constant"
+#      value: 1
+#    }
+#  }
+#}
+#layer {
+#  name: "relu7"
+#  type: "ReLU"
+#  bottom: "fc7"
+#  top: "fc7"
+#}
+#layer {
+#  name: "drop7"
+#  type: "Dropout"
+#  bottom: "fc7"
+#  top: "fc7"
+#  dropout_param {
+#    dropout_ratio: 0.5
+#  }
+#}
 
 layer {
   name: "conv1_b"
@@ -354,12 +397,12 @@ layer {
   bottom: "data_b"
   top: "conv1_b"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 0
     name: "conv1_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv1_b"
   }
@@ -411,12 +454,12 @@ layer {
   bottom: "norm1_b"
   top: "conv2_b"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 0
     name: "conv2_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv2_b"
   }
@@ -469,12 +512,12 @@ layer {
   bottom: "norm2_b"
   top: "conv3_b"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 0
     name: "conv3_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv3_b"
   }
@@ -504,12 +547,12 @@ layer {
   bottom: "conv3_b"
   top: "conv4_b"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 0
     name: "conv4_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv4_b"
   }
@@ -540,12 +583,12 @@ layer {
   bottom: "conv4_b"
   top: "conv5_b"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 0
     name: "conv5_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "conv5_b"
   }
@@ -587,12 +630,12 @@ layer {
   bottom: "pool5_b"
   top: "fc6_celeb_b"
   param {
-    lr_mult: 0
-    decay_mult: 0
+    lr_mult: 1
+    decay_mult: 1
     name: "fc6_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
     name: "fc6_b"
   }
@@ -620,9 +663,52 @@ layer {
   bottom: "fc6_celeb_b"
   top: "fc6_celeb_b"
   dropout_param {
-    dropout_ratio: 0.5
+    dropout_ratio: 0.1
   }
 }
+
+#layer {
+#  name: "fc7_b"
+#  type: "InnerProduct"
+#  bottom: "fc6_celeb_b"
+#  top: "fc7_b"
+#  param {
+#    lr_mult: 1
+#    decay_mult: 1
+#    name: "fc7_w"
+#  }
+#  param {
+#    lr_mult: 2
+#    decay_mult: 0
+#    name: "fc7_b"
+#  }
+#  inner_product_param {
+#    num_output: 1024
+#    weight_filler {
+#      type: "gaussian"
+#      std: 0.005
+#    }
+#    bias_filler {
+#      type: "constant"
+#      value: 1
+#    }
+#  }
+#}
+#layer {
+#  name: "relu7_b"
+#  type: "ReLU"
+#  bottom: "fc7_b"
+#  top: "fc7_b"
+#}
+#layer {
+#  name: "drop7_b"
+#  type: "Dropout"
+#  bottom: "fc7_b"
+#  top: "fc7_b"
+#  dropout_param {
+#    dropout_ratio: 0.5
+#  }
+#}
 
 
 
@@ -689,7 +775,7 @@ layer {
   bottom: "fc7_celeb"
   bottom: "label"
   top: "softmax_loss"
-  loss_weight: 1.0
+  loss_weight: 0.5
 }
 layer {
   name: "accuracy"
@@ -708,11 +794,11 @@ layer {
   bottom: "fc6_celeb"
   top: "ip2"
   param {
-    lr_mult: 0
+    lr_mult: 1
     name: "ip2_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     name: "ip2_b"
   }
   inner_product_param {
@@ -735,11 +821,11 @@ layer {
   bottom: "fc6_celeb_b"
   top: "ip2_b"
   param {
-    lr_mult: 0
+    lr_mult: 1
     name: "ip2_w"
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     name: "ip2_b"
   }
   inner_product_param {
@@ -753,114 +839,6 @@ layer {
       value: 0
     }
   }
-}
-
-
-layer {
-    name: "diff"
-    type: "Eltwise"
-    eltwise_param {
-      coeff: 1
-      coeff: -1
-    }
-    bottom: "ip2"
-    bottom: "ip2_b"
-    top: "diff"
-}
-
-#layer {
-#    name: "absval"
-#    type: "AbsVal"
-#    bottom: "diff"
-#    top: "absval"
-#}
-
-
-layer {
-    name: "sqrval"
-    type: "Eltwise"
-    eltwise_param {
-      operation: PROD
-    }
-    bottom: "diff"
-    bottom: "diff"
-    top: "sqrval"
-}
-
-layer {
-  name: "ip3"
-  type: "InnerProduct"
-  bottom: "sqrval"
-  top: "ip3"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  inner_product_param {
-    num_output: 1
-    weight_filler {
-      type: "constant"
-      value: 1.0
-    }
-    bias_filler {
-      type: "constant"
-      value: 0
-    }
-  }
-}
-
-layer {
-  name: "ip4"
-  type: "InnerProduct"
-  bottom: "ip3"
-  top: "ip4"
-  param {
-    lr_mult: 1
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 2
-    decay_mult: 0
-  }
-  inner_product_param {
-    num_output: 2
-    weight_filler {
-      type: "gaussian"
-      std: 0.01
-    }
-    bias_filler {
-      type: "constant"
-      value: 1
-    }
-  }
-}
-
-layer {
-  name: "distrelu"
-  type: "ReLU"
-  bottom: "ip4"
-  top: "ip4"
-}
-
-layer {
-  name: "siamese_softmax_loss"
-  type: "SoftmaxWithLoss"
-  bottom: "ip4"
-  bottom: "same_label"
-  top: "siamese_softmax_loss"
-  loss_weight: 0.5
-}
-
-layer {
-  name: "siamese_accuracy"
-  type: "Accuracy"
-  bottom: "ip4"
-  bottom: "same_label"
-  top: "siamese_accuracy"
 }
 
 

@@ -391,7 +391,7 @@ layer {
   bottom: "fc7_celeb"
   bottom: "label"
   top: "softmax_loss"
-  loss_weight: 1.0
+  loss_weight: 0.5
 }
 layer {
   name: "accuracy"

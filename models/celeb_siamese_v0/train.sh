@@ -4,7 +4,7 @@ TOOLS=./build/tools
 
 GLOG_logtostderr=0 GLOG_log_dir=models/celeb_siamese_v0/ $TOOLS/caffe train \
   --solver=models/celeb_siamese_v0/solver.prototxt \
-  --weights=models/celeb_siamese_v0/celeb_v17_iter_450000.caffemodel \
+  --weights=models/celeb_siamese_v0/celeb_v17_iter_500000.caffemodel \
   --gpu=$1
 
 #  --weights=models/celeb_siamese_v0/celeb_v18_iter_20000.caffemodel \

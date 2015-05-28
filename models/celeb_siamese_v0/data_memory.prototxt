@@ -1,0 +1,14 @@
+
+layer {
+  name: "data_XXX"
+  type: "MemoryData"
+  top: "data_XXX"
+  top: "label_XXX"
+  memory_data_param {
+    batch_size: 25
+    channels: 3
+    height: 227
+    width: 227
+  }
+}
+

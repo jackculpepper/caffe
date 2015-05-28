@@ -62,7 +62,7 @@ layer {
   bottom: "ip3"
   top: "ip4"
   param {
-    lr_mult: 1
+    lr_mult: 0
     decay_mult: 0
   }
   param {
@@ -82,12 +82,12 @@ layer {
   }
 }
 
-layer {
-  name: "distrelu"
-  type: "ReLU"
-  bottom: "ip4"
-  top: "ip4"
-}
+#layer {
+#  name: "distrelu"
+#  type: "ReLU"
+#  bottom: "ip4"
+#  top: "ip4"
+#}
 
 layer {
   name: "siamese_softmax_loss"
