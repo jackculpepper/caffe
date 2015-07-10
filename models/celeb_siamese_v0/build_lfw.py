@@ -17,8 +17,8 @@ name_to_int = dict()
 for i, name in enumerate(lfw_names):
     name_to_int[name] = i
 
-lfw_a_fh = open('lfw_a_v2.txt', 'w')
-lfw_b_fh = open('lfw_b_v2.txt', 'w')
+lfw_a_fh = open('lfw_v2_a.txt', 'w')
+lfw_b_fh = open('lfw_v2_b.txt', 'w')
 
 with open(pairs_path, 'r') as fh:
     splits, n_per_split = fh.readline().strip().split()

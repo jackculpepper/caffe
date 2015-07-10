@@ -87,3 +87,15 @@ cat shared_contrast.prototxt | sed 's/_XXX/_b/g' >>$OUTFILE
 #cat contrast.prototxt >>$OUTFILE
 cat contrast_contrastiveloss.prototxt >>$OUTFILE
 
+
+OUTFILE=test_feature.prototxt
+echo >$OUTFILE
+
+cat header_test_feature.prototxt >>$OUTFILE
+cat data_memory.prototxt | sed 's/_XXX//g' >>$OUTFILE
+
+cat shared.prototxt | sed 's/_XXX//g' >>$OUTFILE
+
+cat shared_contrast.prototxt | sed 's/_XXX//g' >>$OUTFILE
+
+
