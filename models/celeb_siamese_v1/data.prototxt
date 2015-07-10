@@ -9,10 +9,10 @@ layer {
   }
   transform_param {
     mirror: true
-    mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
+    mean_file: "models/celeb_siamese_v1/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_trn_siamese_XXX.txt"
+    source: "models/celeb_siamese_v1/clusters_2_seed=0_trn_siamese_XXX.txt"
     batch_size: 25
   }
 }
@@ -26,10 +26,10 @@ layer {
   }
   transform_param {
     mirror: false
-    mean_file: "models/celeb_siamese_v0/celeb34372_mean.binaryproto"
+    mean_file: "models/celeb_siamese_v1/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v0/clusters_2_seed=0_tst_siamese_XXX.txt"
+    source: "models/celeb_siamese_v1/clusters_2_seed=0_tst_siamese_XXX.txt"
     batch_size: 25
   }
 }
