@@ -22,8 +22,14 @@ parser.add_argument('-d', '--device_id', type=int, help='''gpu device number''',
 
 model_root = '.'
 
+model_file = 'celeb_v23_iter_2370000.caffemodel'
 model_file = 'celeb_v17_iter_550000.caffemodel'
+model_file = 'celeb_v23_iter_2800000.caffemodel'
+
+
 model_prototxt = 'test_siamese_memorydata.prototxt'
+model_prototxt = 'test_feature.prototxt'
+
 mean_file = 'celeb34372_mean.npy'
 mean_file = 'celeb34372_mean.binaryproto'
 
@@ -31,6 +37,11 @@ mean_file = 'celeb34372_mean.binaryproto'
 lfw_a_file = join(model_root, 'lfw.txt')
 lfw_b_file = join(model_root, 'lfw_b.txt')
 
+lfw_a_file = join(model_root, 'lfw_v2_a.txt')
+lfw_b_file = join(model_root, 'lfw_v2_b.txt')
+
+lfw_knn_file = join(model_root, 'lfw_v2_knn.txt')
+tobi_file = join(model_root, 'tobi.txt')
 
 lines_cache = {}
 images_cache = {}
@@ -107,6 +118,7 @@ def load_batch(data_file, mean_trn_img,
 
     data = np.zeros((batch_size, 3, 227, 227), dtype=np.float32)
     labels = np.zeros((batch_size, 1, 1, 1), dtype=np.float32)
+    paths = list()
 
     for i in range(batch_size):
         if batch_num == -1:
@@ -117,6 +129,7 @@ def load_batch(data_file, mean_trn_img,
                 j = j % len(lines)
 
         image_path, label = lines[j].split()
+        paths.append(image_path)
         label = float(label)
 
         input_image = load_image(image_path)
@@ -130,7 +143,7 @@ def load_batch(data_file, mean_trn_img,
         print 'loaded batch in %.3f s' % ( time() - t0 ),
         print '%d cache hits' % images_cache_hits
 
-    return data, labels
+    return data, labels, paths
 
 
 
@@ -151,18 +164,20 @@ def run_batches(net, num_tst_batches, batch_size, mean_trn_img):
     for i in range(num_tst_batches):
         print '%d / %d' % (i, num_tst_batches)
 
-        data_lfw_a, labels_lfw_a = load_batch(lfw_a_file, mean_trn_img, i, batch_size)
-        data_lfw_b, labels_lfw_b = load_batch(lfw_b_file, mean_trn_img, i, batch_size)
+        data_lfw_a, labels_lfw_a, paths_lfw_a = load_batch(lfw_a_file, mean_trn_img, i, batch_size)
+        data_lfw_b, labels_lfw_b, paths_lfw_b = load_batch(lfw_b_file, mean_trn_img, i, batch_size)
 
         net.set_input_arrays('data',   data_lfw_a, labels_lfw_a)
         net.set_input_arrays('data_b', data_lfw_b, labels_lfw_b)
 
         net.forward()
         same_label = np.array(net.blobs['same_label'].data.squeeze())
-        ip2_a = net.blobs['ip2'].data.squeeze()
-        ip2_b = net.blobs['ip2_b'].data.squeeze()
+        #ip2_a = net.blobs['ip2'].data.squeeze()
+        #ip2_b = net.blobs['ip2_b'].data.squeeze()
+        feat_a = net.blobs['fc6_celeb'].data.squeeze()
+        feat_b = net.blobs['fc6_celeb_b'].data.squeeze()
 
-        diff = ip2_a - ip2_b
+        diff = feat_a - feat_b
         dist = (diff**2).sum(axis=1)
 
         same_labels.append(same_label)
@@ -172,6 +187,73 @@ def run_batches(net, num_tst_batches, batch_size, mean_trn_img):
     same_labels = np.hstack(same_labels)
 
     return dists, same_labels
+
+
+def run_knn(net, num_tst_batches, batch_size, mean_trn_img, top_k=10):
+    features = list()
+    labels = list()
+    paths = list()
+
+    knn_file = lfw_knn_file
+    knn_file = tobi_file
+
+    for i in range(num_tst_batches):
+        print '%d / %d' % (i, num_tst_batches)
+
+        data_lfw, labels_lfw, paths_lfw = load_batch(knn_file, mean_trn_img, i, batch_size)
+
+        net.set_input_arrays('data', data_lfw, labels_lfw)
+
+        net.forward()
+        #ip2_a = net.blobs['ip2'].data.squeeze()
+        feat = net.blobs['fc6_celeb'].data.squeeze()
+
+        features.append(np.array(feat))
+        labels.append(np.array(labels_lfw.squeeze()))
+        paths.extend(paths_lfw)
+
+
+    features_mat = np.vstack(features)
+    labels_mat = np.hstack(labels)
+
+    from scipy.spatial.distance import pdist
+    from scipy.spatial.distance import squareform
+
+    dists = squareform(pdist(features_mat, 'euclidean'))
+    dists_sorted_idx = np.argsort(dists, 0)
+
+    import IPython ; IPython.embed()
+
+    d = dict()
+    d['features'] = features_mat
+    d['paths'] = paths
+
+    with open('feats.pkl', 'w') as fh:
+        pickle.dump(d, fh)
+
+    out_dir = '/raid/tobi/data/account_faces/ranked'
+
+    for i in range(dists.shape[0]):
+        q = paths[dists_sorted_idx[0,i]]
+        print 'query', q
+
+        fname = os.path.basename(q)
+        out_file = join(out_dir, fname + '___.jpg')
+        shutil.copy(q, out_file)
+
+        for j in range(top_k):
+            p = paths[dists_sorted_idx[j,i]]
+            print p
+
+            out_file = fname + "_%02d_" % j + os.path.basename(p)
+
+            out_file = join(out_dir, out_file)
+
+            shutil.copy(p, out_file)
+
+        import IPython ; IPython.embed()
+
+
 
 def calc_acc(dists, same_labels, thresh):
     same_idx = np.where(same_labels == 1)
@@ -231,25 +313,32 @@ def main(args):
 
     mean_trn_img = load_mean()
 
+    if True:
+        num_tst_batches = 24
+        num_tst_batches = 426
+        run_knn(net, num_tst_batches, batch_size, mean_trn_img)
 
 
-    # contrastive loss for first batch: 0.06643287092447281
 
-    num_tst_batches = 24
-    dists, same_labels = run_batches(net, num_tst_batches, batch_size, mean_trn_img)
+    if False:
+        # contrastive loss for first batch: 0.06643287092447281
 
-    max_acc, max_thresh = sweep_thresh(dists, same_labels)
+        num_tst_batches = 24
+        dists, same_labels = run_batches(net, num_tst_batches, batch_size, mean_trn_img)
 
-    print 'max_thresh', max_thresh, 'max_acc', max_acc
+        max_acc, max_thresh = sweep_thresh(dists, same_labels)
 
-    num_tst_batches = 96
-    num_tst_batches = 237
+        print 'max_thresh', max_thresh, 'max_acc', max_acc
 
-    dists, same_labels = run_batches(net, num_tst_batches, batch_size, mean_trn_img)
+        num_tst_batches = 96
+        num_tst_batches = 237
+        num_tst_batches = 240
 
-    acc = calc_acc(dists, same_labels, max_thresh)
+        dists, same_labels = run_batches(net, num_tst_batches, batch_size, mean_trn_img)
 
-    print 'thresh', max_thresh, 'acc', acc
+        acc = calc_acc(dists, same_labels, max_thresh)
+
+        print 'thresh', max_thresh, 'acc', acc
 
 
 
