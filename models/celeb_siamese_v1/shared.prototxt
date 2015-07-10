@@ -1,0 +1,276 @@
+layer {
+  name: "conv1_XXX"
+  type: "Convolution"
+  bottom: "data_XXX"
+  top: "conv1_XXX"
+  param {
+    lr_mult: 1
+    decay_mult: 0
+    name: "conv1_w"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "conv1_b"
+  }
+  convolution_param {
+    num_output: 96
+    kernel_size: 11
+    stride: 4
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "relu1_XXX"
+  type: "ReLU"
+  bottom: "conv1_XXX"
+  top: "conv1_XXX"
+}
+layer {
+  name: "pool1_XXX"
+  type: "Pooling"
+  bottom: "conv1_XXX"
+  top: "pool1_XXX"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "norm1_XXX"
+  type: "LRN"
+  bottom: "pool1_XXX"
+  top: "norm1_XXX"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
+  name: "conv2_XXX"
+  type: "Convolution"
+  bottom: "norm1_XXX"
+  top: "conv2_XXX"
+  param {
+    lr_mult: 1
+    decay_mult: 0
+    name: "conv2_w"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "conv2_b"
+  }
+  convolution_param {
+    num_output: 256
+    pad: 2
+    kernel_size: 5
+    group: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu2_XXX"
+  type: "ReLU"
+  bottom: "conv2_XXX"
+  top: "conv2_XXX"
+}
+layer {
+  name: "pool2_XXX"
+  type: "Pooling"
+  bottom: "conv2_XXX"
+  top: "pool2_XXX"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "norm2_XXX"
+  type: "LRN"
+  bottom: "pool2_XXX"
+  top: "norm2_XXX"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
+  name: "conv3_XXX"
+  type: "Convolution"
+  bottom: "norm2_XXX"
+  top: "conv3_XXX"
+  param {
+    lr_mult: 1
+    decay_mult: 0
+    name: "conv3_w"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "conv3_b"
+  }
+  convolution_param {
+    num_output: 384
+    pad: 1
+    kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "relu3_XXX"
+  type: "ReLU"
+  bottom: "conv3_XXX"
+  top: "conv3_XXX"
+}
+layer {
+  name: "conv4_XXX"
+  type: "Convolution"
+  bottom: "conv3_XXX"
+  top: "conv4_XXX"
+  param {
+    lr_mult: 1
+    decay_mult: 0
+    name: "conv4_w"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "conv4_b"
+  }
+  convolution_param {
+    num_output: 384
+    pad: 1
+    kernel_size: 3
+    group: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu4_XXX"
+  type: "ReLU"
+  bottom: "conv4_XXX"
+  top: "conv4_XXX"
+}
+layer {
+  name: "conv5_XXX"
+  type: "Convolution"
+  bottom: "conv4_XXX"
+  top: "conv5_XXX"
+  param {
+    lr_mult: 1
+    decay_mult: 0
+    name: "conv5_w"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "conv5_b"
+  }
+  convolution_param {
+    num_output: 256
+    pad: 1
+    kernel_size: 3
+    group: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu5_XXX"
+  type: "ReLU"
+  bottom: "conv5_XXX"
+  top: "conv5_XXX"
+}
+layer {
+  name: "pool5_XXX"
+  type: "Pooling"
+  bottom: "conv5_XXX"
+  top: "pool5_XXX"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "fc6_XXX"
+  type: "InnerProduct"
+  bottom: "pool5_XXX"
+  top: "fc6_XXX"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+    name: "fc6_w"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "fc6_b"
+  }
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "gaussian"
+      std: 0.005
+    }
+    bias_filler {
+      type: "constant"
+      value: 1
+    }
+  }
+}
+layer {
+  name: "relu6_XXX"
+  type: "ReLU"
+  bottom: "fc6_XXX"
+  top: "fc6_XXX"
+}
+layer {
+  name: "drop6_XXX"
+  type: "Dropout"
+  bottom: "fc6_XXX"
+  top: "fc6_XXX"
+  dropout_param {
+    dropout_ratio: 0.1
+  }
+}
+
