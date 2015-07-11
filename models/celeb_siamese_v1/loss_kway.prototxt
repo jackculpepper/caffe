@@ -1,18 +1,18 @@
 
 layer {
-  name: "fc7_XXX"
+  name: "fc8_XXX"
   type: "InnerProduct"
-  bottom: "fc6_XXX"
-  top: "fc7_XXX"
+  bottom: "fc7_XXX"
+  top: "fc8_XXX"
   param {
     lr_mult: 1
     decay_mult: 1
-    name: "fc7_w"
+    name: "fc8_w"
   }
   param {
     lr_mult: 2
     decay_mult: 0
-    name: "fc7_b"
+    name: "fc8_b"
   }
   inner_product_param {
     num_output: 19805
@@ -31,15 +31,15 @@ layer {
 layer {
   name: "softmax_loss_XXX"
   type: "SoftmaxWithLoss"
-  bottom: "fc7_XXX"
+  bottom: "fc8_XXX"
   bottom: "label_XXX"
   top: "softmax_loss_XXX"
-  loss_weight: 0.5
+  loss_weight: 1.0
 }
 layer {
   name: "accuracy_XXX"
   type: "Accuracy"
-  bottom: "fc7_XXX"
+  bottom: "fc8_XXX"
   bottom: "label_XXX"
   top: "accuracy_XXX"
   include {

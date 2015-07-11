@@ -426,19 +426,99 @@ layer {
 
 
 layer {
-  name: "fc6"
-  type: "InnerProduct"
+  name: "conv61"
+  type: "Convolution"
   bottom: "pool5"
-  top: "fc6"
+  top: "conv61"
   param {
     lr_mult: 1
-    decay_mult: 1
-    name: "fc6_w"
+    decay_mult: 0
+    name: "conv61_w"
   }
   param {
     lr_mult: 2
     decay_mult: 0
-    name: "fc6_b"
+    name: "conv61_b"
+  }
+  convolution_param {
+    num_output: 192
+    pad: 1
+    kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "conv62"
+  type: "Convolution"
+  bottom: "conv61"
+  top: "conv62"
+  param {
+    lr_mult: 1
+    decay_mult: 0
+    name: "conv62_w"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "conv62_b"
+  }
+  convolution_param {
+    num_output: 384
+    pad: 1
+    kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "relu6"
+  type: "ReLU"
+  bottom: "conv62"
+  top: "conv62"
+}
+layer {
+  name: "pool6"
+  type: "Pooling"
+  bottom: "conv62"
+  top: "pool6"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+
+
+
+
+
+layer {
+  name: "fc7"
+  type: "InnerProduct"
+  bottom: "pool6"
+  top: "fc7"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+    name: "fc7_w"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "fc7_b"
   }
   inner_product_param {
     num_output: 1024
@@ -453,16 +533,16 @@ layer {
   }
 }
 layer {
-  name: "relu6"
+  name: "relu8"
   type: "ReLU"
-  bottom: "fc6"
-  top: "fc6"
+  bottom: "fc7"
+  top: "fc7"
 }
 layer {
-  name: "drop6"
+  name: "drop7"
   type: "Dropout"
-  bottom: "fc6"
-  top: "fc6"
+  bottom: "fc7"
+  top: "fc7"
   dropout_param {
     dropout_ratio: 0.1
   }
@@ -470,19 +550,19 @@ layer {
 
 
 layer {
-  name: "fc7"
+  name: "fc8"
   type: "InnerProduct"
-  bottom: "fc6"
-  top: "fc7"
+  bottom: "fc7"
+  top: "fc8"
   param {
     lr_mult: 1
     decay_mult: 1
-    name: "fc7_w"
+    name: "fc8_w"
   }
   param {
     lr_mult: 2
     decay_mult: 0
-    name: "fc7_b"
+    name: "fc8_b"
   }
   inner_product_param {
     num_output: 19805
@@ -501,15 +581,15 @@ layer {
 layer {
   name: "softmax_loss"
   type: "SoftmaxWithLoss"
-  bottom: "fc7"
+  bottom: "fc8"
   bottom: "label"
   top: "softmax_loss"
-  loss_weight: 0.5
+  loss_weight: 1.0
 }
 layer {
   name: "accuracy"
   type: "Accuracy"
-  bottom: "fc7"
+  bottom: "fc8"
   bottom: "label"
   top: "accuracy"
   include {

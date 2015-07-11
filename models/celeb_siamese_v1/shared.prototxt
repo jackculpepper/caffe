@@ -388,19 +388,99 @@ layer {
 
 
 layer {
-  name: "fc6_XXX"
-  type: "InnerProduct"
+  name: "conv61_XXX"
+  type: "Convolution"
   bottom: "pool5_XXX"
-  top: "fc6_XXX"
+  top: "conv61_XXX"
   param {
     lr_mult: 1
-    decay_mult: 1
-    name: "fc6_w"
+    decay_mult: 0
+    name: "conv61_w"
   }
   param {
     lr_mult: 2
     decay_mult: 0
-    name: "fc6_b"
+    name: "conv61_b"
+  }
+  convolution_param {
+    num_output: 192
+    pad: 1
+    kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "conv62_XXX"
+  type: "Convolution"
+  bottom: "conv61_XXX"
+  top: "conv62_XXX"
+  param {
+    lr_mult: 1
+    decay_mult: 0
+    name: "conv62_w"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "conv62_b"
+  }
+  convolution_param {
+    num_output: 384
+    pad: 1
+    kernel_size: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "relu6_XXX"
+  type: "ReLU"
+  bottom: "conv62_XXX"
+  top: "conv62_XXX"
+}
+layer {
+  name: "pool6_XXX"
+  type: "Pooling"
+  bottom: "conv62_XXX"
+  top: "pool6_XXX"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+
+
+
+
+
+layer {
+  name: "fc7_XXX"
+  type: "InnerProduct"
+  bottom: "pool6_XXX"
+  top: "fc7_XXX"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+    name: "fc7_w"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "fc7_b"
   }
   inner_product_param {
     num_output: 1024
@@ -415,16 +495,16 @@ layer {
   }
 }
 layer {
-  name: "relu6_XXX"
+  name: "relu8_XXX"
   type: "ReLU"
-  bottom: "fc6_XXX"
-  top: "fc6_XXX"
+  bottom: "fc7_XXX"
+  top: "fc7_XXX"
 }
 layer {
-  name: "drop6_XXX"
+  name: "drop7_XXX"
   type: "Dropout"
-  bottom: "fc6_XXX"
-  top: "fc6_XXX"
+  bottom: "fc7_XXX"
+  top: "fc7_XXX"
   dropout_param {
     dropout_ratio: 0.1
   }
