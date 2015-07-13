@@ -63,9 +63,20 @@ layer {
   top: "conv12_XXX"
 }
 layer {
+  name: "norm1_XXX"
+  type: "LRN"
+  bottom: "conv12_XXX"
+  top: "norm1_XXX"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
   name: "pool1_XXX"
   type: "Pooling"
-  bottom: "conv12_XXX"
+  bottom: "norm1_XXX"
   top: "pool1_XXX"
   pooling_param {
     pool: MAX
@@ -73,8 +84,6 @@ layer {
     stride: 2
   }
 }
-
-
 
 layer {
   name: "conv21_XXX"
@@ -101,7 +110,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -130,7 +139,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -141,9 +150,20 @@ layer {
   top: "conv22_XXX"
 }
 layer {
+  name: "norm2_XXX"
+  type: "LRN"
+  bottom: "conv22_XXX"
+  top: "norm2_XXX"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
   name: "pool2_XXX"
   type: "Pooling"
-  bottom: "conv22_XXX"
+  bottom: "norm2_XXX"
   top: "pool2_XXX"
   pooling_param {
     pool: MAX
@@ -179,7 +199,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -208,7 +228,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -257,7 +277,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -286,7 +306,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -334,7 +354,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -363,7 +383,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -412,7 +432,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -441,7 +461,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -490,7 +510,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 1
+      value: 0.1
     }
   }
 }

@@ -14,8 +14,10 @@ layer {
     mean_file: "models/celeb_siamese_v1/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v1/clusters_2_seed=0_trn_siamese.txt"
-    batch_size: 25
+    #source: "models/celeb_siamese_v1/clusters_2_seed=0_trn_siamese.txt"
+    source: "models/celeb_siamese_v1/clusters_2_seed=0_trn.txt.shuf"
+    #source: "models/celeb_siamese_v1/clusters_2_seed=0_trn.txt.shuf.small"
+    batch_size: 20
   }
 }
 layer {
@@ -31,8 +33,10 @@ layer {
     mean_file: "models/celeb_siamese_v1/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v1/clusters_2_seed=0_tst_siamese.txt"
-    batch_size: 25
+    #source: "models/celeb_siamese_v1/clusters_2_seed=0_tst_siamese.txt"
+    source: "models/celeb_siamese_v1/clusters_2_seed=0_tst.txt.shuf"
+    #source: "models/celeb_siamese_v1/clusters_2_seed=0_trn.txt.shuf.small"
+    batch_size: 20
   }
 }
 
@@ -101,9 +105,20 @@ layer {
   top: "conv12"
 }
 layer {
+  name: "norm1"
+  type: "LRN"
+  bottom: "conv12"
+  top: "norm1"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
   name: "pool1"
   type: "Pooling"
-  bottom: "conv12"
+  bottom: "norm1"
   top: "pool1"
   pooling_param {
     pool: MAX
@@ -111,8 +126,6 @@ layer {
     stride: 2
   }
 }
-
-
 
 layer {
   name: "conv21"
@@ -139,7 +152,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -168,7 +181,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -179,9 +192,20 @@ layer {
   top: "conv22"
 }
 layer {
+  name: "norm2"
+  type: "LRN"
+  bottom: "conv22"
+  top: "norm2"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
   name: "pool2"
   type: "Pooling"
-  bottom: "conv22"
+  bottom: "norm2"
   top: "pool2"
   pooling_param {
     pool: MAX
@@ -217,7 +241,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -246,7 +270,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -295,7 +319,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -324,7 +348,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -372,7 +396,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -401,7 +425,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -450,7 +474,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -479,7 +503,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 0
+      value: 0.1
     }
   }
 }
@@ -528,7 +552,7 @@ layer {
     }
     bias_filler {
       type: "constant"
-      value: 1
+      value: 0.1
     }
   }
 }

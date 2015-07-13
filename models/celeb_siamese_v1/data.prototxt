@@ -12,8 +12,10 @@ layer {
     mean_file: "models/celeb_siamese_v1/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v1/clusters_2_seed=0_trn_siamese_XXX.txt"
-    batch_size: 25
+    #source: "models/celeb_siamese_v1/clusters_2_seed=0_trn_siamese_XXX.txt"
+    source: "models/celeb_siamese_v1/clusters_2_seed=0_trn.txt.shuf"
+    #source: "models/celeb_siamese_v1/clusters_2_seed=0_trn.txt.shuf.small"
+    batch_size: 20
   }
 }
 layer {
@@ -29,8 +31,10 @@ layer {
     mean_file: "models/celeb_siamese_v1/celeb34372_mean.binaryproto"
   }
   image_data_param {
-    source: "models/celeb_siamese_v1/clusters_2_seed=0_tst_siamese_XXX.txt"
-    batch_size: 25
+    #source: "models/celeb_siamese_v1/clusters_2_seed=0_tst_siamese_XXX.txt"
+    source: "models/celeb_siamese_v1/clusters_2_seed=0_tst.txt.shuf"
+    #source: "models/celeb_siamese_v1/clusters_2_seed=0_trn.txt.shuf.small"
+    batch_size: 20
   }
 }
 

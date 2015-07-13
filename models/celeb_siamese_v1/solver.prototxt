@@ -12,5 +12,5 @@ max_iter: 2800000
 momentum: 0.9
 weight_decay: 0.0005
 snapshot: 10000
-snapshot_prefix: "models/celeb_siamese_v1/celeb_v2"
+snapshot_prefix: "models/celeb_siamese_v1/celeb_v5"
 #solver_mode: CPU
