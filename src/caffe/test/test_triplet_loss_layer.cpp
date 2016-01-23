@@ -19,8 +19,8 @@ class TripletLossLayerTest : public MultiDeviceTest<TypeParam> {
 
  protected:
   TripletLossLayerTest()
-      : blob_bottom_data_(new Blob<Dtype>(6, 1, 1, 1)),
-        blob_bottom_y_(new Blob<Dtype>(6, 1, 1, 1)),
+      : blob_bottom_data_(new Blob<Dtype>(60, 10, 1, 1)),
+        blob_bottom_y_(new Blob<Dtype>(60, 1, 1, 1)),
         blob_top_loss_(new Blob<Dtype>()) {
     // fill the values
     FillerParameter filler_param;

@@ -21,7 +21,7 @@ template <typename Dtype>
     virtual inline int ExactNumBottomBlobs() const { return 2; }
     virtual inline const char* type() const { return "TripletLoss"; }
     /**
-     * Unlike most loss layers, in the TripletLossLayer we can backpropagate
+     * Like most loss layers, in the TripletLossLayer we can backpropagate
      * to the first input. The second input is a label that is not actually used,
      * because the loss is calculated under the presumption that the batch elements
      * are 3-tuples with this order: anchor, positive, negative.
