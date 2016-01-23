@@ -3,11 +3,11 @@ test_iter: 100
 test_interval: 500
 base_lr: 0.001
 momentum: 0.9
-weight_decay: 0.0000
+weight_decay: 0.0001
 lr_policy: "step"
 gamma: 0.1
 stepsize: 10000
-display: 1
+display: 10
 max_iter: 50000
 snapshot: 5000
 snapshot_prefix: "examples/triplet/mnist_triplet"

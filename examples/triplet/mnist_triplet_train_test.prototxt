@@ -51,17 +51,34 @@ layer {
     kernel_size: 5
     stride: 1
     weight_filler {
-      type: "xavier"
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"
+      value: 0
     }
   }
 }
 layer {
+  name: "bn1"
+  type: "BatchNorm"
+  bottom: "conv1"
+  top: "bn1"
+  param { lr_mult: 0 }
+  param { lr_mult: 0 }
+  param { lr_mult: 0 }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "bn1"
+  top: "bn1"
+}
+layer {
   name: "pool1"
   type: "Pooling"
-  bottom: "conv1"
+  bottom: "bn1"
   top: "pool1"
   pooling_param {
     pool: MAX
@@ -87,17 +104,34 @@ layer {
     kernel_size: 5
     stride: 1
     weight_filler {
-      type: "xavier"
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"
+      value: 0
     }
   }
 }
 layer {
+  name: "bn2"
+  type: "BatchNorm"
+  bottom: "conv2"
+  top: "bn2"
+  param { lr_mult: 0 }
+  param { lr_mult: 0 }
+  param { lr_mult: 0 }
+}
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "bn2"
+  top: "bn2"
+}
+layer {
   name: "pool2"
   type: "Pooling"
-  bottom: "conv2"
+  bottom: "bn2"
   top: "pool2"
   pooling_param {
     pool: MAX
@@ -121,23 +155,34 @@ layer {
   inner_product_param {
     num_output: 500
     weight_filler {
-      type: "xavier"
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"
+      value: 0
     }
   }
 }
 layer {
-  name: "relu1"
-  type: "ReLU"
+  name: "bn3"
+  type: "BatchNorm"
   bottom: "ip1"
-  top: "ip1"
+  top: "bn3"
+  param { lr_mult: 0 }
+  param { lr_mult: 0 }
+  param { lr_mult: 0 }
+}
+layer {
+  name: "relu3"
+  type: "ReLU"
+  bottom: "bn3"
+  top: "bn3"
 }
 layer {
   name: "ip2"
   type: "InnerProduct"
-  bottom: "ip1"
+  bottom: "bn3"
   top: "ip2"
   param {
     name: "ip2_w"
@@ -150,17 +195,34 @@ layer {
   inner_product_param {
     num_output: 10
     weight_filler {
-      type: "xavier"
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"
+      value: 0
     }
   }
 }
 layer {
+  name: "bn4"
+  type: "BatchNorm"
+  bottom: "ip2"
+  top: "bn4"
+  param { lr_mult: 0 }
+  param { lr_mult: 0 }
+  param { lr_mult: 0 }
+}
+layer {
+  name: "relu4"
+  type: "ReLU"
+  bottom: "bn4"
+  top: "bn4"
+}
+layer {
   name: "feat"
   type: "InnerProduct"
-  bottom: "ip2"
+  bottom: "bn4"
   top: "feat"
   param {
     name: "feat_w"
@@ -173,20 +235,38 @@ layer {
   inner_product_param {
     num_output: 2
     weight_filler {
-      type: "xavier"
+      type: "gaussian"
+      std: 0.01
     }
     bias_filler {
       type: "constant"
+      value: 0
     }
   }
 }
 layer {
-  name: "loss"
+  name: "softmax_loss"
+  type: "SoftmaxWithLoss"
+  bottom: "ip2"
+  bottom: "label"
+  top: "softmax_loss"
+  loss_weight: 0.5
+}
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "ip2"
+  bottom: "label"
+  top: "accuracy"
+}
+layer {
+  name: "triplet_loss"
   type: "TripletLoss"
   bottom: "feat"
   bottom: "label"
-  top: "loss"
+  top: "triplet_loss"
+  loss_weight: 0.5
   triplet_loss_param {
-    margin: 1
+    margin: 0.1
   }
 }
