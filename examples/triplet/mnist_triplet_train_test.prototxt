@@ -220,10 +220,10 @@ layer {
   top: "bn4"
 }
 layer {
-  name: "feat"
+  name: "ip3"
   type: "InnerProduct"
   bottom: "bn4"
-  top: "feat"
+  top: "ip3"
   param {
     name: "feat_w"
     lr_mult: 1
@@ -244,13 +244,22 @@ layer {
     }
   }
 }
+#layer {
+#  name: "bn5"
+#  type: "BatchNorm"
+#  bottom: "ip3"
+#  top: "bn5"
+#  param { lr_mult: 0 }
+#  param { lr_mult: 0 }
+#  param { lr_mult: 0 }
+#}
 layer {
   name: "softmax_loss"
   type: "SoftmaxWithLoss"
   bottom: "ip2"
   bottom: "label"
   top: "softmax_loss"
-  loss_weight: 0.5
+  loss_weight: 0.99
 }
 layer {
   name: "accuracy"
@@ -262,10 +271,10 @@ layer {
 layer {
   name: "triplet_loss"
   type: "TripletLoss"
-  bottom: "feat"
+  bottom: "ip3"
   bottom: "label"
   top: "triplet_loss"
-  loss_weight: 0.5
+  loss_weight: 0.01
   triplet_loss_param {
     margin: 0.1
   }
