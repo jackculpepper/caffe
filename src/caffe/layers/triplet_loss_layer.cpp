@@ -90,7 +90,6 @@ void TripletLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
     for (int i = 0; i < num_triplets; ++i) {
       Dtype* bout = bottom[0]->mutable_cpu_diff();
 
-//      cout << "i " << i << ":";
       if (loss_i_.mutable_cpu_data()[i] > Dtype(0.0)) {
         // contribution to dE/dx_a from x_a - x_p term
         caffe_cpu_axpby(dim,
@@ -98,7 +97,6 @@ void TripletLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
                         diff_pos.cpu_data() + i*dim,
                         Dtype(1.0),
                         bout + 3*i*dim);
-//        cout << " 1";
 
         // contribution to dE/dx_a from x_a - x_n term
         caffe_cpu_axpby(dim,
@@ -106,7 +104,6 @@ void TripletLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
                         diff_neg.cpu_data() + i*dim,
                         Dtype(1.0),
                         bout + 3*i*dim);
-//        cout << " 2";
 
         // contribution to dE/dx_p from x_a - x_p term
         caffe_cpu_axpby(dim,
@@ -114,7 +111,6 @@ void TripletLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
                         diff_pos.cpu_data() + i*dim,
                         Dtype(1.0),
                         bout + (3*i + 1)*dim);
-//        cout << " 3";
 
         // contribution to dE/dx_n from x_a - x_n term
         caffe_cpu_axpby(dim,
@@ -122,9 +118,7 @@ void TripletLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
                         diff_neg.cpu_data() + i*dim,
                         Dtype(1.0),
                         bout + (3*i + 2)*dim);
-//        cout << " 4";
       }
-//      cout << endl;
     }
   }
 }
