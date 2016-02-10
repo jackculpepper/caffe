@@ -1,0 +1,44 @@
+
+layer {
+  name: "Sz_YYY"
+  type: "InnerProduct"
+  bottom: "z_XXX"
+  top: "Sz_YYY"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+    name: "WWW"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "ZZZ"
+  }
+  inner_product_param {
+    num_output: 400
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer {
+  name: "sc_YYY"
+  type: "Eltwise"
+  bottom: "Ex"
+  bottom: "Sz_YYY"
+  top: "Ex_Sz_YYY"
+}
+
+layer {
+  name: "relu_YYY"
+  type: "ReLU"
+  bottom: "Ex_Sz_YYY"
+  top: "z_YYY"
+}
+

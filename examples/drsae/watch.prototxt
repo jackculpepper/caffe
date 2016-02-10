@@ -1,0 +1,55 @@
+
+layer {
+  name: "recon_XXX"
+  type: "InnerProduct"
+  bottom: "z_XXX"
+  top: "recon_XXX"
+  param {
+    lr_mult: 1
+    name: "WWW"
+  }
+  param {
+    lr_mult: 2
+    name: "ZZZ"
+  }
+  inner_product_param {
+    num_output: 784
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "euclidean_loss_XXX"
+  type: "EuclideanLoss"
+  bottom: "data"
+  bottom: "recon_XXX"
+  top: "euclidean_loss_XXX"
+  loss_weight: 0.0
+}
+
+layer {
+  name: "power_XXX"
+  type: "Power"
+  bottom: "z_XXX"
+  top: "power_XXX"
+  power_param {
+    power: 0.5
+    shift: 0.00000001
+  }
+}
+
+layer {
+  name: "sparse_loss_XXX"
+  type: "EuclideanLoss"
+  bottom: "power_XXX"
+  bottom: "UUU"
+  top: "sparse_loss_XXX"
+  loss_weight: 0.0
+}
+

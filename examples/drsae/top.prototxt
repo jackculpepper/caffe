@@ -1,0 +1,67 @@
+
+
+layer {
+  name: "ip0"
+  type: "InnerProduct"
+  bottom: "data"
+  top: "ip0"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 400
+    weight_filler {
+      type: "constant"
+      value: 0
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+
+
+layer {
+  name: "Ex"
+  type: "InnerProduct"
+  bottom: "data"
+  top: "Ex"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+    name: "WWW"
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+    name: "ZZZ"
+  }
+  inner_product_param {
+    num_output: 400
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+
+layer {
+  name: "z_000"
+  type: "ReLU"
+  bottom: "Ex"
+  top: "z_000"
+}
+
+
